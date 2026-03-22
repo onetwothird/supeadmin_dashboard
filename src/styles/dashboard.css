@@ -59,18 +59,24 @@ body {
   background: var(--sidebar-bg); 
   display: flex; 
   flex-direction: column; 
-  padding: 24px 0 16px 0; 
+  padding: 24px 0 24px 0; /* Increased bottom padding from 16px to 24px for that little bottom margin */
   border-right: 1px solid var(--border-color); 
   transition: background-color 0.3s ease, border-color 0.3s ease;
+  
+  /* NEW: Locks the sidebar to the screen so bottom items never hide */
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  box-sizing: border-box;
 }
 
 .logo-area { 
-  padding: 0 24px 24px 24px; /* Reduced bottom padding slightly */
-  margin-bottom: 16px; /* Adds space before the nav items start */
+  padding: 0 24px 24px 24px; 
+  margin-bottom: 16px; 
   display: flex; 
   align-items: center; 
   gap: 12px; 
-  border-bottom: 1px solid var(--border-color); /* The full-width underline separator */
+  border-bottom: 1px solid var(--border-color); 
 }
 
 .logo-icon { 
@@ -134,9 +140,17 @@ body {
 
 /* Main Content Styles */
 .main-content { 
-  flex-grow: 1; 
-  padding: 48px; 
-  max-width: 1200px; 
+  flex: 1; 
+  min-width: 0; 
+  padding: 48px 4%; 
+  box-sizing: border-box; 
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  margin-bottom: 40px;
 }
 
 .header-badge { 
@@ -321,4 +335,70 @@ body {
   font-size: 13px; 
   color: var(--tip-text); 
   line-height: 1.6; 
+}
+
+
+/* =========================================
+   RESPONSIVE DESIGN (Tablets & Mobile)
+   ========================================= */
+
+/* Laptops & Smaller Desktops */
+@media (max-width: 1200px) {
+  .content-grid {
+    grid-template-columns: 1fr; 
+  }
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr); 
+  }
+}
+
+/* Tablets */
+@media (max-width: 992px) {
+  .dashboard-container {
+    flex-direction: column; 
+  }
+  .sidebar {
+    width: 100%;
+    height: auto;
+    padding: 16px 24px;
+    box-sizing: border-box;
+    border-right: none;
+    border-bottom: 1px solid var(--border-color);
+    position: relative; /* <-- ADD THIS LINE */
+  }
+  
+  .logo-area {
+    padding: 0 0 16px 0;
+    margin-bottom: 0;
+  }
+  .nav-menu {
+    flex-direction: row;
+    flex-wrap: wrap;
+    padding: 16px 0 0 0;
+    gap: 8px;
+  }
+  .sidebar-bottom {
+    flex-direction: row;
+    padding: 16px 0 0 0;
+    justify-content: flex-start;
+  }
+  .main-content {
+    padding: 32px 5%;
+  }
+}
+
+/* Mobile Phones */
+@media (max-width: 768px) {
+  .stats-grid {
+    grid-template-columns: 1fr; 
+  }
+  .cards-grid {
+    grid-template-columns: 1fr; 
+  }
+  .page-title {
+    font-size: 26px;
+  }
+  .main-content {
+    padding: 24px 16px;
+  }
 }
