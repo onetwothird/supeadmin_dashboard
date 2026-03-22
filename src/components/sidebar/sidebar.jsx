@@ -1,18 +1,38 @@
-//C:\seelai-web-dashboard\src\components\sidebar\sidebar.jsx
-
 import React from 'react';
+// Updated to your new PNG file name
 
-// Notice we added activeView and setActiveView to this list!
 function Sidebar({ handleLogout, isDarkMode, toggleDarkMode, activeView, setActiveView }) {
   return (
     <div className="sidebar">
-      <div className="logo-area">
-        <div className="logo-icon">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
-        </div>
-        <span className="logo-text">SEELAI</span>
+      <div className="logo-area" style={{ 
+        display: 'flex', 
+        alignItems: 'center', 
+        gap: '12px', 
+        padding: '0 24px 24px 24px',
+        borderBottom: '1px solid var(--border-color)',
+        marginBottom: '16px'
+      }}>
+        <img 
+          src= "/assets/seelai_logo.png"
+          alt="SEELAI Logo" 
+          style={{ 
+            width: '64px', 
+            height: 'auto', 
+            objectFit: 'contain',
+            display: 'block'
+          }} 
+        />
+        <span className="logo-text" style={{ 
+          fontSize: '24px', 
+          fontWeight: '800', 
+          letterSpacing: '-0.03em',
+          lineHeight: '1', /* Prevents the text from drifting vertically */
+          marginTop: '4px' /* Nudges the text down slightly to perfectly align with the visual center of your PNG */
+        }}>
+          SEELAI
+        </span>
       </div>
-      
+
       <div className="nav-menu">
         <div 
           className={`nav-item ${activeView === 'dashboard' ? 'active' : ''}`}
