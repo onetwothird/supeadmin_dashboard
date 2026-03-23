@@ -255,4 +255,5 @@ function ActivityLogs() {
     </div>
   );
 }
+
 export default ActivityLogs;
