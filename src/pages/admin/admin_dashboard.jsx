@@ -6,6 +6,8 @@ import { database, auth } from '../../firebase';
 import { ref, push, set, serverTimestamp, onValue } from 'firebase/database';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
 import DashboardOverview from '../../section/dashboard/dashboard_content';
+import UserManagement from '../../section/user_management/user_management_content';
+import ActivityLogs from '../../section/activity_logs/activity_logs_content';
 // 1. FIXED PATH: Point to the new styles folder
 import '../../styles/dashboard.css'; 
 
@@ -21,7 +23,7 @@ function AdminDashboard() {
   const [userStats, setUserStats] = useState({ total: 0, partially_sighted: 0, caretakers: 0 });
   const [isDarkMode, setIsDarkMode] = useState(false);
   
-  const [activeView, setActiveView] = useState('model_training'); 
+  const [activeView, setActiveView] = useState('dashboard'); 
   const [activeStep, setActiveStep] = useState(1);
 
   useEffect(() => {
@@ -44,20 +46,23 @@ function AdminDashboard() {
     });
 
     const usersRef = ref(database, 'user_info');
+    
+    // Notice the added error callback at the end!
     const unsubscribeData = onValue(usersRef, (snapshot) => {
       if (snapshot.exists()) {
         const data = snapshot.val();
         
-        // Count users safely (handling cases where a node might be empty)
+        // Let's print the raw data to the browser console to see it!
+        console.log("🔥 Raw Data from Firebase:", data);
+        
         const partiallySightedCount = data.partially_sighted ? Object.keys(data.partially_sighted).length : 0;
         const caretakerCount = data.caretaker ? Object.keys(data.caretaker).length : 0;
         const mswdCount = data.mswd ? Object.keys(data.mswd).length : 0;
+        const superadminCount = data.superadmin ? Object.keys(data.superadmin).length : 0;
 
-        // Calculate pending caretakers by checking the 'approved' flag
         let pendingCaretakersCount = 0;
         if (data.caretaker) {
           Object.values(data.caretaker).forEach(user => {
-            // According to your Flutter code, pending means approved is false and rejected is not true
             if (user.approved === false && user.rejected !== true) {
               pendingCaretakersCount++;
             }
@@ -65,16 +70,19 @@ function AdminDashboard() {
         }
 
         setUserStats({
-          total: partiallySightedCount + caretakerCount + mswdCount,
+          total: partiallySightedCount + caretakerCount + mswdCount + superadminCount,
           partially_sighted: partiallySightedCount,
           caretakers: caretakerCount,
-          mswd: mswdCount,
+          mswd: mswdCount + superadminCount,
           pending: pendingCaretakersCount
         });
       } else {
-        // Fallback if the database is completely empty
+        console.warn("⚠️ Firebase connection successful, but 'user_info' is empty or doesn't exist.");
         setUserStats({ total: 0, partially_sighted: 0, caretakers: 0, mswd: 0, pending: 0 });
       }
+    }, (error) => {
+      // THIS will tell us if Firebase is blocking you!
+      console.error("❌ Firebase Read Error:", error);
     });
 
     return () => {
@@ -106,14 +114,15 @@ function AdminDashboard() {
     }
   };
 
-  const renderContent = () => {
+const renderContent = () => {
     switch (activeView) {
       case 'dashboard':
-        return <DashboardOverview userStats={userStats} />; // Updated!
+        return <DashboardOverview userStats={userStats} setActiveView={setActiveView} />; 
       case 'user_management':
-        return <div className="main-content"><h1 className="page-title">User Management</h1></div>;
+        return <UserManagement logActivity={logActivity} />; 
       case 'activity_logs':
-        return <div className="main-content"><h1 className="page-title">Activity Logs</h1></div>;
+        // USE THE NEW COMPONENT HERE:
+        return <ActivityLogs />; 
       case 'model_training':
         return (
           <ModelTraining 
