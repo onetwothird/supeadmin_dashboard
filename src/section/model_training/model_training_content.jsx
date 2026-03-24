@@ -1,7 +1,9 @@
 import React from 'react';
 
 function ModelTraining({ activeStep, setActiveStep, userStats, logActivity }) {
-  const roboflowLink = "https://app.roboflow.com/"; 
+  // Define both of your specific Roboflow project links
+  const roboflowObjectLink = "https://app.roboflow.com/seelai/seelai-objects/annotate";
+  const roboflowFaceLink = "https://app.roboflow.com/seelai/seelai-face/annotate";
   const colabLink = "https://colab.research.google.com/";
 
   return (
@@ -19,8 +21,9 @@ function ModelTraining({ activeStep, setActiveStep, userStats, logActivity }) {
         <div>
           <div className="section-title">Step 1 & 2: Data & Training</div>
           <div className="cards-grid">
-            {/* Roboflow Card */}
-            <div className={`action-card ${activeStep === 1 ? 'active' : ''}`} onClick={() => { setActiveStep(1); logActivity("Opened Roboflow"); window.open(roboflowLink, '_blank'); }}>
+            
+            {/* Roboflow Card - UPDATED FOR TWO LINKS */}
+            <div className={`action-card ${activeStep === 1 ? 'active' : ''}`} onClick={() => setActiveStep(1)}>
               <div className="card-header">
                 <div className="card-title">
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
@@ -30,7 +33,39 @@ function ModelTraining({ activeStep, setActiveStep, userStats, logActivity }) {
                   {activeStep === 1 && <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3"><polyline points="20 6 9 17 4 12"/></svg>}
                 </div>
               </div>
-              <div className="card-desc">Access Roboflow to upload images and draw bounding boxes.</div>
+              <div className="card-desc" style={{ marginBottom: '12px' }}>
+                Select a dataset to review uploads and draw bounding boxes.
+              </div>
+              
+              {/* Added Two Buttons for Objects and Faces */}
+              <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
+                <button 
+                  style={{ flex: 1, padding: '8px', borderRadius: '6px', border: '1px solid #d1d5db', backgroundColor: '#f9fafb', cursor: 'pointer', fontWeight: '500', fontSize: '13px', color: '#374151' }}
+                  onClick={(e) => {
+                    e.stopPropagation(); // Prevents the card's onClick from misfiring
+                    setActiveStep(1);
+                    logActivity("Opened Roboflow: Objects");
+                    window.open(roboflowObjectLink, '_blank');
+                  }}
+                  onMouseOver={(e) => e.target.style.backgroundColor = '#e5e7eb'}
+                  onMouseOut={(e) => e.target.style.backgroundColor = '#f9fafb'}
+                >
+                  Edit Objects
+                </button>
+                <button 
+                  style={{ flex: 1, padding: '8px', borderRadius: '6px', border: '1px solid #d1d5db', backgroundColor: '#f9fafb', cursor: 'pointer', fontWeight: '500', fontSize: '13px', color: '#374151' }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setActiveStep(1);
+                    logActivity("Opened Roboflow: Faces");
+                    window.open(roboflowFaceLink, '_blank');
+                  }}
+                  onMouseOver={(e) => e.target.style.backgroundColor = '#e5e7eb'}
+                  onMouseOut={(e) => e.target.style.backgroundColor = '#f9fafb'}
+                >
+                  Edit Faces
+                </button>
+              </div>
             </div>
 
             {/* Colab Card */}
