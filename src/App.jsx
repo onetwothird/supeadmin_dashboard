@@ -1,7 +1,7 @@
 //C:\seelai-web-dashboard\src\App.jsx
 
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import AdminDashboard from './pages/admin/admin_dashboard'; 
+import AdminDashboard from './pages/admin/admin_content'; 
 import Login from './auth/login';
 import Register from './auth/register';
 
