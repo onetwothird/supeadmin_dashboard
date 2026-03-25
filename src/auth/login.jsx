@@ -79,7 +79,6 @@ function Login() {
       const isAuthorized = await handleRoleRouting(user);
 
       if (!isAuthorized) {
-        // Fallback for new Google sign-ins (adjust this logic as needed for your security rules)
         const newAdminRef = ref(database, `user_info/superadmin/${user.uid}`);
         await set(newAdminRef, {
           name: user.displayName || "Google Admin",
@@ -98,15 +97,13 @@ function Login() {
     } 
   };
 
-  const styles = {
+   const styles = {
     pageContainer: { minHeight: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center', backgroundColor: '#F3F4F6', fontFamily: '"Poppins", -apple-system, sans-serif', padding: '20px', boxSizing: 'border-box' },
     card: { display: 'flex', backgroundColor: '#FFFFFF', borderRadius: '20px', boxShadow: '0 20px 40px -10px rgba(0, 0, 0, 0.08)', overflow: 'hidden', width: '100%', maxWidth: '1040px', minHeight: '640px' },
-    leftPanel: { flex: '1.2', padding: '34px', display: 'flex', flexDirection: 'column', justifyContent: 'center' },
-    
-  
-    rightPanel: { flex: '1', display: window.innerWidth > 768 ? 'flex' : 'none', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', backgroundColor: '#6225C5', padding: '0', position: 'relative',overflow: 'hidden' },
+    // 💡 FIX: Updated padding from 14px to 40px here to match the login page
+    leftPanel: { flex: '1', padding: '34Px', display: 'flex', flexDirection: 'column', justifyContent: 'center' },
+     rightPanel: { flex: '1', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', backgroundColor: '#6225C5', padding: '0', position: 'relative', overflow: 'hidden' },
     posterImage: { width: '100%', height: '100%', objectFit: 'cover', display: 'block' },
-    
     title: { fontSize: '32px', fontWeight: '800', color: '#111827', marginBottom: '8px', letterSpacing: '-0.02em' },
     subtitle: { fontSize: '15px', color: '#6B7280', marginBottom: '40px' },
     formGroup: { marginBottom: '24px' },
@@ -138,20 +135,27 @@ function Login() {
           .stagger-3 { opacity: 0; animation: microFadeUp 0.4s ease-out 0.15s forwards; }
           .stagger-4 { opacity: 0; animation: microFadeUp 0.4s ease-out 0.2s forwards; }
           .modern-input { transition: border-color 0.2s ease, box-shadow 0.2s ease; }
-          .modern-input:focus { border-color: #8B5CF6 !important; box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1) !important; }
+          .modern-input:focus { border-color: #8B5CF6 !important; box-shadow: none !important; }
           .modern-btn { transition: transform 0.2s ease, box-shadow 0.2s ease; }
           .modern-btn:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 4px 12px -2px rgba(139, 92, 246, 0.3) !important; }
           .google-btn { transition: transform 0.2s ease, background-color 0.2s ease; }
           .google-btn:hover:not(:disabled) { background-color: #F9FAFB !important; transform: translateY(-1px); }
           .eye-icon:hover { color: #6B7280 !important; }
+          
+          /* RESPONSIVE QUERIES */
+          @media (max-width: 800px) {
+            .right-panel { display: none !important; }
+            .left-panel { padding: 30px 20px !important; }
+            .responsive-card { min-height: auto !important; }
+          }
         `}
       </style>
 
       <div className="unselectable-wrapper" style={styles.pageContainer}>
-        <div style={styles.card} className="animate-page">
-          <div style={styles.leftPanel}>
+        <div style={styles.card} className="animate-page responsive-card">
+          <div style={styles.leftPanel} className="left-panel">
             <div className="stagger-1">
-              <h1 style={styles.title}>Welcome Back</h1>
+              <h1 style={styles.title}>Welcome Back, MSWD!</h1>
               <p style={styles.subtitle}>Log in to the Seelai Control Center.</p>
               {firebaseError && <div style={styles.mainError}>{firebaseError}</div>}
             </div>
@@ -202,8 +206,7 @@ function Login() {
             </div>
           </div>
 
-          <div style={styles.rightPanel}>
-              {/* Using logo.png as requested. If your image is still named poster.png, change this src! */}
+          <div style={styles.rightPanel} className="right-panel">
               <img src="/assets/logo.png" alt="Seelai Visual" style={styles.posterImage} />
           </div>
         </div>
