@@ -42,7 +42,6 @@ function UserManagement({ logActivity }) {
       try {
         await update(ref(database, `user_info/caretaker/${user.id}`), { approved: true, approvedAt: serverTimestamp(), updatedAt: serverTimestamp() });
         if (logActivity) logActivity(`Approved caretaker: ${user.name}`);
-      // eslint-disable-next-line no-unused-vars
       } catch (error) { alert("Failed to approve user."); }
     }
   };
@@ -93,7 +92,7 @@ function UserManagement({ logActivity }) {
           ) : (
             <div className="cards-grid">
               {pendingCaretakers.map(user => (
-                <div key={user.id} className="info-card" style={{ padding: 0, overflow: 'hidden', marginBottom: 0 }}>
+                <div key={user.id} className="info-card" style={{ padding: 0, overflow: 'hidden', marginBottom: 0  }}>
                   <div style={{ padding: '20px', borderBottom: '1px solid var(--border-color)', display: 'flex', justifyContent: 'space-between', background: 'var(--bg-color)' }}>
                     <div>
                       <h3 style={{ fontSize: '16px', fontWeight: '600', color: 'var(--text-main)', margin: '0 0 4px 0' }}>{user.name}</h3>
