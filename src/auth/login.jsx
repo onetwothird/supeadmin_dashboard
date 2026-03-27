@@ -150,7 +150,6 @@ function Login() {
           }
         `}
       </style>
-
       <div className="unselectable-wrapper" style={styles.pageContainer}>
         <div style={styles.card} className="animate-page responsive-card">
           <div style={styles.leftPanel} className="left-panel">
