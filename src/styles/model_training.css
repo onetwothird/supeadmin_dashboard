@@ -1,0 +1,209 @@
+/* C:\seelai-web-dashboard\src\styles\model_training.css */
+
+.step-section-title {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--text-main);
+  margin-top: 32px;
+  margin-bottom: 16px;
+}
+
+/* 2-Column Grid for Step 1 & 2 */
+.cards-grid-2 { 
+  display: grid; 
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); 
+  gap: 24px; 
+}
+
+/* Full Width Grid for Step 3 */
+.cards-grid-1 {
+  display: grid; 
+  grid-template-columns: 1fr; 
+  gap: 24px;
+}
+
+/* Main Card Styling */
+.action-card {
+  background: var(--card-bg);
+  border: 2px solid var(--border-color);
+  border-radius: 16px;
+  padding: 32px; 
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+  display: flex;
+  flex-direction: column;
+}
+
+.action-card:hover { 
+  border-color: var(--primary); 
+}
+
+/* Active State: Uses var(--card-bg) so it's pure white in Light Mode, but respects Dark Mode */
+.action-card.active {
+  border-color: var(--primary);
+  background-color: var(--card-bg); 
+  box-shadow: 0 8px 24px var(--primary-bg); /* Soft glow using variables */
+}
+
+.card-header { 
+  display: flex; 
+  justify-content: space-between; 
+  align-items: flex-start; 
+  margin-bottom: 16px; 
+}
+
+.card-title { 
+  font-size: 18px; 
+  font-weight: 800; 
+  color: var(--text-main); 
+  display: flex; 
+  align-items: center; 
+  gap: 10px; 
+}
+
+.card-title svg { 
+  color: var(--text-main); 
+}
+
+.card-desc { 
+  font-size: 14px; 
+  color: var(--text-muted); 
+  line-height: 1.6; 
+  margin-bottom: 24px;
+  max-width: 800px;
+}
+
+/* Checkmark Circle */
+.check-circle { 
+  width: 26px; 
+  height: 26px; 
+  border-radius: 50%; 
+  border: 2px solid var(--border-color); 
+  display: flex; 
+  align-items: center; 
+  justify-content: center; 
+  transition: all 0.2s ease; 
+  background: var(--card-bg);
+}
+
+.action-card.active .check-circle { 
+  background: var(--primary); 
+  border-color: var(--primary); 
+}
+
+/* Buttons inside Cards */
+.robo-btn-group { 
+  display: flex; 
+  gap: 16px; 
+  margin-top: auto; 
+}
+
+.robo-btn {
+  flex: 1; 
+  padding: 12px; 
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  background-color: var(--card-bg);
+  color: var(--text-main);
+  cursor: pointer; 
+  font-weight: 600; 
+  font-size: 14px;
+  transition: all 0.2s; 
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+}
+
+.robo-btn:hover { 
+  border-color: var(--primary);
+  color: var(--primary);
+  background-color: var(--primary-bg); /* Enforced Dark Mode Background */
+}
+
+/* File Upload Dropzone */
+.custom-upload-zone {
+  margin-top: auto;
+  border: 2px dashed var(--border-color);
+  border-radius: 12px;
+  padding: 40px 20px;
+  text-align: center;
+  background: var(--card-bg);
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.action-card.active .custom-upload-zone {
+  border-color: var(--primary);
+}
+
+.custom-upload-zone:hover {
+  border-color: var(--primary);
+  background: var(--primary-bg); /* Enforced Dark Mode Background */
+}
+
+.upload-btn {
+  background: var(--primary);
+  color: #ffffff;
+  padding: 12px 32px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: none;
+  transition: opacity 0.2s;
+}
+
+.upload-btn:hover {
+  opacity: 0.9;
+}
+
+.upload-text {
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+/* Pro Tip Banner */
+.tip-card {
+  background-color: transparent;
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 24px;
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  margin-top: 40px;
+}
+
+.tip-icon {
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tip-content {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.tip-title {
+  color: var(--primary);
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.tip-desc {
+  color: var(--text-muted);
+  font-size: 14px;
+  line-height: 1.6;
+}
