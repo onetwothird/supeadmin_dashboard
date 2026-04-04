@@ -37,7 +37,7 @@
   .hamburger-btn { background: transparent; border: none; color: var(--text-main); cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 8px; border-radius: 6px; transition: background-color 0.2s ease; }
   .hamburger-btn:hover { background: var(--hover-bg); }
 
-  .sidebar { position: fixed; top: 0; left: 0; transform: translateX(-100%); width: 280px; height: 100vh; z-index: 1000; transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 4px 0 24px rgba(0,0,0,0.1); background: var(--sidebar-bg); }
+  .sidebar { position: fixed; top: 0; left: 0; transform: translateX(-100%); width: 280px; height: 100vh; z-index: 1000; transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); background: var(--sidebar-bg); }
   .sidebar.open { transform: translateX(0); }
 
   .nav-menu { flex-direction: column; padding: 0 16px; }

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { auth, database } from '../firebase';
 import { signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, signOut } from 'firebase/auth';
@@ -12,8 +12,18 @@ function Login() {
   const [errors, setErrors] = useState({});
   const [firebaseError, setFirebaseError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  
+  const [toast, setToast] = useState(null); 
 
   const primaryColor = '#8B5CF6';
+
+  useEffect(() => {
+    if (sessionStorage.getItem('showLogoutToast') === 'true') {
+      setToast({ message: 'Logged out successfully.', type: 'info' });
+      sessionStorage.removeItem('showLogoutToast'); 
+      setTimeout(() => setToast(null), 3000);
+    }
+  }, []);
 
   const validateForm = () => {
     const newErrors = {};
@@ -33,19 +43,23 @@ function Login() {
     const superadminSnap = await get(superadminRef);
 
     if (superadminSnap.exists() && superadminSnap.val().role === 'superadmin') {
-      navigate('/admin');
-      return true;
+      return { 
+        route: '/admin', 
+        name: superadminSnap.val().name || user.displayName || 'Admin' 
+      };
     }
 
     const mswdRef = ref(database, `user_info/mswd/${user.uid}`);
     const mswdSnap = await get(mswdRef);
 
     if (mswdSnap.exists() && mswdSnap.val().role === 'admin') {
-      navigate('/mswd');
-      return true;
+      return { 
+        route: '/mswd', 
+        name: mswdSnap.val().name || user.displayName || 'MSWD Admin' 
+      };
     }
 
-    return false;
+    return null;
   };
 
   const handleSubmit = async (e) => {
@@ -56,12 +70,18 @@ function Login() {
     setIsLoading(true);
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
-      const isAuthorized = await handleRoleRouting(userCredential.user);
+      const authData = await handleRoleRouting(userCredential.user);
 
-      if (!isAuthorized) {
+      if (!authData) {
         await signOut(auth);
         throw new Error("Access denied. Authorized admin account required.");
       }
+
+      setToast({ message: `Welcome back, ${authData.name}!`, type: 'success' });
+      setTimeout(() => {
+        navigate(authData.route);
+      }, 1500);
+
     } catch (err) {
       setFirebaseError(err.message.replace('Firebase: ', ''));
       setIsLoading(false);
@@ -76,12 +96,13 @@ function Login() {
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
 
-      const isAuthorized = await handleRoleRouting(user);
+      const authData = await handleRoleRouting(user);
 
-      if (!isAuthorized) {
+      if (!authData) {
         const newAdminRef = ref(database, `user_info/superadmin/${user.uid}`);
+        const newName = user.displayName || "Google Admin";
         await set(newAdminRef, {
-          name: user.displayName || "Google Admin",
+          name: newName,
           email: user.email,
           role: "superadmin",
           department: "IT Control",
@@ -89,7 +110,12 @@ function Login() {
           createdAt: serverTimestamp(),
           updatedAt: serverTimestamp(),
         });
-        navigate('/admin');
+
+        setToast({ message: `Welcome, ${newName}!`, type: 'success' });
+        setTimeout(() => navigate('/admin'), 1500);
+      } else {
+        setToast({ message: `Welcome back, ${authData.name}!`, type: 'success' });
+        setTimeout(() => navigate(authData.route), 1500);
       }
     } catch (err) {
       setFirebaseError(err.message.replace('Firebase: ', ''));
@@ -99,19 +125,24 @@ function Login() {
 
    const styles = {
     pageContainer: { minHeight: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center', backgroundColor: '#F3F4F6', fontFamily: '"Poppins", -apple-system, sans-serif', padding: '20px', boxSizing: 'border-box' },
-    card: { display: 'flex', backgroundColor: '#FFFFFF', borderRadius: '20px', boxShadow: '0 20px 40px -10px rgba(0, 0, 0, 0.08)', overflow: 'hidden', width: '100%', maxWidth: '1040px', minHeight: '640px' },
-    // 💡 FIX: Updated padding from 14px to 40px here to match the login page
-    leftPanel: { flex: '1', padding: '34Px', display: 'flex', flexDirection: 'column', justifyContent: 'center' },
-     rightPanel: { flex: '1', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', backgroundColor: '#6225C5', padding: '0', position: 'relative', overflow: 'hidden' },
+    card: { display: 'flex', backgroundColor: '#FFFFFF', borderRadius: '20px', overflow: 'hidden', width: '100%', maxWidth: '1040px', minHeight: '640px' },
+    leftPanel: { flex: '1', padding: '40px', display: 'flex', flexDirection: 'column', justifyContent: 'center' },
+    
+    // ENFORCED #8B5CF6 HERE
+    rightPanel: { flex: '1', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', backgroundColor: primaryColor, padding: '0', position: 'relative', overflow: 'hidden' },
+    
     posterImage: { width: '100%', height: '100%', objectFit: 'cover', display: 'block' },
     title: { fontSize: '32px', fontWeight: '800', color: '#111827', marginBottom: '8px', letterSpacing: '-0.02em' },
     subtitle: { fontSize: '15px', color: '#6B7280', marginBottom: '40px' },
     formGroup: { marginBottom: '24px' },
     inputWrapper: { position: 'relative', display: 'flex', alignItems: 'center' },
-    input: (hasError) => ({ width: '100%', padding: '16px 18px', borderRadius: '12px', border: `1px solid ${hasError ? '#EF4444' : '#E5E7EB'}`, backgroundColor: '#FFFFFF', fontSize: '14px', outline: 'none', boxSizing: 'border-box', color: '#111827', fontFamily: '"Poppins", sans-serif' }),
+    
+    // ENFORCED #8B5CF6 FOR ERRORS
+    input: (hasError) => ({ width: '100%', padding: '16px 18px', borderRadius: '12px', border: `1px solid ${hasError ? primaryColor : '#E5E7EB'}`, backgroundColor: '#FFFFFF', fontSize: '14px', outline: 'none', boxSizing: 'border-box', color: '#111827', fontFamily: '"Poppins", sans-serif' }),
     eyeIcon: { position: 'absolute', right: '16px', cursor: 'pointer', color: '#9CA3AF', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '4px', transition: 'color 0.2s ease' },
-    inlineError: { color: '#EF4444', fontSize: '13px', marginTop: '8px', marginLeft: '4px', fontWeight: '500' },
-    mainError: { color: '#EF4444', fontSize: '14px', marginBottom: '24px', backgroundColor: '#FEE2E2', padding: '16px', borderRadius: '14px', textAlign: 'center', fontWeight: '500', border: '1px solid #FCA5A5' },
+    inlineError: { color: primaryColor, fontSize: '13px', marginTop: '8px', marginLeft: '4px', fontWeight: '500' },
+    mainError: { color: primaryColor, fontSize: '14px', marginBottom: '24px', backgroundColor: '#F5F3FF', padding: '16px', borderRadius: '14px', textAlign: 'center', fontWeight: '500', border: `1px solid ${primaryColor}` },
+    
     buttonPrimary: { width: '100%', padding: '16px', borderRadius: '12px', backgroundColor: primaryColor, color: 'white', fontWeight: '600', border: 'none', cursor: isLoading ? 'wait' : 'pointer', marginTop: '8px', fontSize: '15px', opacity: isLoading ? 0.7 : 1, fontFamily: '"Poppins", sans-serif' },
     buttonGoogle: { width: '100%', padding: '16px', borderRadius: '12px', backgroundColor: '#FFFFFF', color: '#374151', fontWeight: '600', border: '1px solid #E5E7EB', cursor: isLoading ? 'wait' : 'pointer', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '12px', fontSize: '14px', fontFamily: '"Poppins", sans-serif' },
     divider: { display: 'flex', alignItems: 'center', textAlign: 'center', margin: '32px 0', color: '#9CA3AF', fontSize: '12px', fontWeight: '600', textTransform: 'uppercase' },
@@ -129,27 +160,62 @@ function Login() {
           .unselectable-wrapper input, .unselectable-wrapper button, .unselectable-wrapper a { user-select: auto; -webkit-user-select: auto; -ms-user-select: auto; }
           @keyframes microSlideRight { 0% { opacity: 0; transform: translateX(-8px); } 100% { opacity: 1; transform: translateX(0); } }
           @keyframes microFadeUp { 0% { opacity: 0; transform: translateY(6px); } 100% { opacity: 1; transform: translateY(0); } }
+          @keyframes toastSlideDown { 0% { transform: translate(-50%, -100%); opacity: 0; } 100% { transform: translate(-50%, 0); opacity: 1; } }
+          
           .animate-page { animation: microSlideRight 0.4s ease-out forwards; will-change: transform, opacity; }
           .stagger-1 { opacity: 0; animation: microFadeUp 0.4s ease-out 0.05s forwards; }
           .stagger-2 { opacity: 0; animation: microFadeUp 0.4s ease-out 0.1s forwards; }
           .stagger-3 { opacity: 0; animation: microFadeUp 0.4s ease-out 0.15s forwards; }
           .stagger-4 { opacity: 0; animation: microFadeUp 0.4s ease-out 0.2s forwards; }
-          .modern-input { transition: border-color 0.2s ease, box-shadow 0.2s ease; }
-          .modern-input:focus { border-color: #8B5CF6 !important; box-shadow: none !important; }
-          .modern-btn { transition: transform 0.2s ease, box-shadow 0.2s ease; }
-          .modern-btn:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 4px 12px -2px rgba(139, 92, 246, 0.3) !important; }
+          
+          .modern-input { transition: border-color 0.2s ease }
+          .modern-input:focus { border-color: #8B5CF6 !important; }
+          .modern-btn { transition: transform 0.2s ease }
+          .modern-btn:hover:not(:disabled) { transform: translateY(-1px); !important; }
           .google-btn { transition: transform 0.2s ease, background-color 0.2s ease; }
           .google-btn:hover:not(:disabled) { background-color: #F9FAFB !important; transform: translateY(-1px); }
           .eye-icon:hover { color: #6B7280 !important; }
+
+          /* ENFORCED #8B5CF6 FOR ALL TOASTS */
+          .custom-toast {
+            position: fixed;
+            top: 32px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 16px 24px;
+            border-radius: 12px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            z-index: 9999;
+            background-color: #8B5CF6;
+            animation: toastSlideDown 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+          }
           
-          /* RESPONSIVE QUERIES */
           @media (max-width: 800px) {
             .right-panel { display: none !important; }
             .left-panel { padding: 30px 20px !important; }
             .responsive-card { min-height: auto !important; }
+            .custom-toast { width: 90%; text-align: center; justify-content: center; }
           }
         `}
       </style>
+
+      {toast && (
+        <div className="custom-toast">
+          {toast.type === 'success' ? (
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+          ) : (
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+          )}
+          {toast.message}
+        </div>
+      )}
+
       <div className="unselectable-wrapper" style={styles.pageContainer}>
         <div style={styles.card} className="animate-page responsive-card">
           <div style={styles.leftPanel} className="left-panel">

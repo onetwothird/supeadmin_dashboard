@@ -21,7 +21,7 @@
 
 /* DARK MODE OVERRIDES */
 [data-theme="dark"] {
-  --primary: #A78BFA; 
+  --primary: #8B5CF6; 
   --primary-bg: #2E1065; 
   --bg-color: #111827; 
   --sidebar-bg: #1F2937;

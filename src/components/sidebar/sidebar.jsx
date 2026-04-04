@@ -9,10 +9,16 @@ function Sidebar({ handleLogout, isDarkMode, toggleDarkMode, activeView, setActi
     }
   };
 
+  const onLogoutClick = () => {
+    sessionStorage.setItem('showLogoutToast', 'true');
+    if (handleLogout) {
+      handleLogout();
+    }
+  };
+
   return (
     <div className={`sidebar ${isOpen ? 'open' : ''}`}>
       
-      {/* 💡 FIXED PADDING: Replaced '0 24px 24px 24px' with '24px' */}
       <div className="logo-area" style={{ 
         display: 'flex', 
         alignItems: 'center', 
@@ -22,19 +28,24 @@ function Sidebar({ handleLogout, isDarkMode, toggleDarkMode, activeView, setActi
         marginBottom: '16px'
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <img 
-            src="/assets/seelai_logo.png"
-            alt="SEELAI Logo" 
-            style={{ width: '48px', height: 'auto', objectFit: 'contain', display: 'block' }} 
-          />
+        <img 
+          src="/assets/seelai_logo.png"
+          alt="SEELAI Logo" 
+          style={{ 
+            width: '40px',          
+            height: '40px',         
+            objectFit: 'contain', 
+            display: 'block',
+            borderRadius: '8px'     
+          }} 
+        />
           <span className="logo-text" style={{ 
-            fontSize: '22px', fontWeight: '800', letterSpacing: '-0.03em', lineHeight: '1'
+            fontSize: '30px', fontWeight: '800', letterSpacing: '-0.03em', lineHeight: '1'
           }}>
             SEELAI
           </span>
         </div>
         
-        {/* Close button visible only on mobile when menu is open */}
         {isOpen && (
           <button 
             onClick={() => setIsOpen(false)} 
@@ -94,7 +105,8 @@ function Sidebar({ handleLogout, isDarkMode, toggleDarkMode, activeView, setActi
             <><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg> Dark Mode</>
           )}
         </div>
-        <div className="nav-item" onClick={handleLogout} style={{ color: '#EF4444' }}>
+        {/* Removed the inline red color to match the theme */}
+        <div className="nav-item" onClick={onLogoutClick}>
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
           Logout
         </div>

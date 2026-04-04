@@ -1,0 +1,234 @@
+/* C:\seelai-web-dashboard\src\styles\activity_logs.css */
+
+/* Header and Search Area */
+.al-header-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.al-search-container {
+  position: relative;
+  width: 100%;
+  max-width: 320px;
+}
+
+.al-search-icon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+}
+
+.al-search-input {
+  width: 100%;
+  padding: 12px 16px 12px 42px;
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+  background: var(--card-bg);
+  color: var(--text-main);
+  font-size: 13px;
+  box-sizing: border-box;
+  outline: none;
+  font-family: 'Poppins';
+  transition: all 0.2s ease;
+}
+
+.al-search-input:focus {
+  border-color: var(--primary);
+}
+
+/* Table Container */
+.al-table-container {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  margin-bottom: 24px;
+  overflow: hidden;
+}
+
+.al-table-scroll-area {
+  overflow-y: auto;
+  max-height: calc(100vh - 320px);
+}
+
+/* Empty & Loading States */
+.al-message-state {
+  padding: 64px 24px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.al-message-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-main);
+  margin: 0;
+}
+
+.al-message-desc {
+  font-size: 14px;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+/* Table Elements */
+.al-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.al-th {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: var(--bg-color);
+  padding: 16px 24px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.al-tr {
+  border-bottom: 1px solid var(--border-color);
+  transition: background-color 0.2s ease;
+}
+
+.al-tr:last-child {
+  border-bottom: none;
+}
+
+.al-tr:hover {
+  background-color: var(--hover-bg);
+}
+
+.al-td {
+  padding: 20px 24px;
+  vertical-align: top;
+}
+
+/* Action Cell */
+.al-action-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.al-action-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.al-action-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 4px;
+  text-transform: capitalize;
+}
+
+.al-action-desc {
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+/* User Cell */
+.al-user-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-main);
+  margin-bottom: 6px;
+}
+
+.al-user-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.al-user-role {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 6px;
+  background: var(--primary-bg);
+  color: var(--primary);
+  text-transform: capitalize;
+}
+
+.al-user-email {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+/* Date Cell */
+.al-date-text {
+  font-size: 13px;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+/* Pagination */
+.al-pagination-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 24px;
+  border-top: 1px solid var(--border-color);
+  background: var(--bg-color);
+}
+
+.al-pagination-text {
+  font-size: 13px;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.al-pagination-controls {
+  display: flex;
+  gap: 8px;
+}
+
+.al-btn {
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  background: var(--card-bg);
+  color: var(--text-main);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.al-btn:not(:disabled):hover {
+  border-color: var(--primary);
+  color: var(--primary);
+  background: var(--primary-light, rgba(139, 92, 246, 0.05));
+}
+
+.al-btn:disabled {
+  background: transparent;
+  color: var(--text-muted);
+  cursor: not-allowed;
+  opacity: 0.5;
+}

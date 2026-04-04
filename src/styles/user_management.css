@@ -1,0 +1,332 @@
+/* C:\seelai-web-dashboard\src\styles\user_management.css */
+
+/* Tabs Navigation */
+.um-tabs-container {
+  display: flex;
+  border-bottom: 1px solid var(--border-color);
+  margin-bottom: 32px;
+  gap: 16px;
+}
+
+.um-tab {
+  padding: 12px 24px;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 14px;
+  color: var(--text-muted);
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.um-tab:hover {
+  color: var(--primary);
+}
+
+.um-tab.active {
+  font-weight: 600;
+  color: var(--primary);
+  border-bottom: 2px solid var(--primary);
+}
+
+.um-badge {
+  background: var(--border-color);
+  color: var(--text-muted);
+  padding: 2px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 700;
+  transition: all 0.2s ease;
+}
+
+.um-tab.active .um-badge {
+  background: var(--primary);
+  color: #ffffff;
+}
+
+/* Empty State */
+.um-empty-state {
+  padding: 64px 24px;
+  text-align: center;
+  background: var(--card-bg);
+  border: 2px dashed var(--border-color);
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.um-empty-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-main);
+  margin: 0;
+}
+
+.um-empty-desc {
+  font-size: 14px;
+  color: var(--text-muted);
+  margin: 0;
+  max-width: 400px;
+}
+
+/* Pending Review Cards Grid */
+.um-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  gap: 24px;
+}
+
+/* Hover animation removed as requested */
+.um-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.um-card-header {
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--border-color);
+  background: var(--bg-color);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.um-card-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-main);
+  margin: 0 0 4px 0;
+}
+
+.um-card-subtitle {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.um-status-badge {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 6px 10px;
+  background: var(--primary-bg);
+  color: var(--primary);
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  white-space: nowrap;
+}
+
+.um-card-body {
+  padding: 24px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.um-detail-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.um-detail-group.full-width {
+  grid-column: span 2;
+}
+
+.um-label {
+  color: var(--text-muted);
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.um-value {
+  color: var(--text-main);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.um-card-actions {
+  padding: 16px 24px;
+  border-top: 1px solid var(--border-color);
+  background: var(--bg-color);
+  display: flex;
+  gap: 12px;
+  margin-top: auto;
+}
+
+.um-btn-approve {
+  flex: 1;
+  padding: 10px;
+  background: var(--primary);
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.um-btn-approve:hover {
+  opacity: 0.9;
+}
+
+.um-btn-reject {
+  flex: 1;
+  padding: 10px;
+  background: transparent;
+  color: var(--text-main);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.um-btn-reject:hover {
+  background: var(--hover-bg);
+}
+
+/* Active Users Table */
+.um-table-container {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  overflow-x: auto;
+}
+
+.um-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.um-th {
+  padding: 16px 24px;
+  font-size: 12px;
+  color: var(--text-muted);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 1px solid var(--border-color);
+  background: var(--bg-color);
+}
+
+.um-tr {
+  transition: background-color 0.2s;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.um-tr:last-child {
+  border-bottom: none;
+}
+
+.um-tr:hover {
+  background-color: var(--hover-bg);
+}
+
+.um-td {
+  padding: 20px 24px;
+  vertical-align: top;
+}
+
+.um-user-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-main);
+  margin-bottom: 4px;
+}
+
+.um-user-email {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+
+.um-demo-pill {
+  font-size: 11px;
+  color: var(--primary);
+  background: var(--primary-bg);
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-weight: 600;
+  display: inline-block;
+}
+
+.um-contact-main {
+  font-size: 13px;
+  color: var(--text-main);
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.um-contact-sub {
+  font-size: 12px;
+  color: var(--text-muted);
+  max-width: 200px;
+  line-height: 1.4;
+}
+
+.um-patients-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--bg-color);
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+}
+
+.um-patients-text {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.um-info-row {
+  font-size: 12px;
+  color: var(--text-main);
+  margin-bottom: 6px;
+  display: flex;
+  gap: 8px;
+}
+
+.um-info-label {
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.um-status-active {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 6px 12px;
+  background: rgba(16, 185, 129, 0.1);
+  color: #10b981;
+  border-radius: 20px;
+  margin-bottom: 8px;
+}
+
+.um-status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #10b981;
+}
+
+.um-date-text {
+  font-size: 12px;
+  color: var(--text-muted);
+}
