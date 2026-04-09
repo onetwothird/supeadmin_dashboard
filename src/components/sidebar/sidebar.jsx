@@ -114,5 +114,4 @@ function Sidebar({ handleLogout, isDarkMode, toggleDarkMode, activeView, setActi
     </div>
   );
 }
-
 export default Sidebar;
