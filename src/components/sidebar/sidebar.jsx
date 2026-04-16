@@ -32,16 +32,16 @@ function Sidebar({ handleLogout, isDarkMode, toggleDarkMode, activeView, setActi
           src="/assets/seelai_logo.png"
           alt="SEELAI Logo" 
           style={{ 
-            width: '40px',          
-            height: '40px',         
-            objectFit: 'contain', 
-            display: 'block',
-            borderRadius: '8px'     
+          width: '40px',          
+          height: '40px',         
+          objectFit: 'cover',
+          display: 'block',
+          borderRadius: '8px',
+          overflow: 'hidden'   
           }} 
         />
           <span className="logo-text" style={{ 
-            fontSize: '30px', fontWeight: '800', letterSpacing: '-0.03em', lineHeight: '1'
-          }}>
+            fontSize: '30px', fontWeight: '800', letterSpacing: '-0.03em', lineHeight: '1', }}>
             SEELAI
           </span>
         </div>
