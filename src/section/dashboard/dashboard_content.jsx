@@ -5,6 +5,45 @@ import { ref, get, query, limitToLast } from 'firebase/database';
 // Import your CSS file here (if not already imported in a parent file)
 import '../../styles/dashboard.css'; 
 
+// Helper component for the counting animation
+const AnimatedNumber = ({ value, duration = 1500 }) => {
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    let startTime = null;
+    let animationId = null;
+    const finalValue = parseInt(value, 10) || 0;
+    
+    // If value is 0, skip the heavy math but update state asynchronously 
+    if (finalValue === 0) {
+      animationId = requestAnimationFrame(() => setCount(0));
+      return () => cancelAnimationFrame(animationId);
+    }
+
+    const animate = (currentTime) => {
+      if (!startTime) startTime = currentTime;
+      const progress = Math.min((currentTime - startTime) / duration, 1);
+      
+      // Ease-out cubic function for a smooth slow-down at the end
+      const easeOut = 1 - Math.pow(1 - progress, 3);
+      
+      setCount(Math.floor(easeOut * finalValue));
+
+      if (progress < 1) {
+        animationId = requestAnimationFrame(animate);
+      } else {
+        setCount(finalValue);
+      }
+    };
+
+    animationId = requestAnimationFrame(animate);
+
+    return () => cancelAnimationFrame(animationId);
+  }, [value, duration]);
+
+  return <>{count}</>;
+};
+
 function DashboardContent({ setActiveView }) {
   const [userName, setUserName] = useState('');
   
@@ -34,7 +73,7 @@ function DashboardContent({ setActiveView }) {
       }
     });
 
-    // 2. Fetch User Demographics
+    // 2. Fetch User Demographics (Modified to RETURN data instead of setting state directly)
     const fetchDemographics = async () => {
       try {
         const [psSnap, ctSnap, mswdSnap] = await Promise.all([
@@ -51,7 +90,6 @@ function DashboardContent({ setActiveView }) {
         const ctCount = Object.keys(ctData).length;
         const mswdCount = Object.keys(mswdData).length;
         
-        // Count pending caretakers
         let pendingCaretakers = 0;
         Object.values(ctData).forEach(user => {
           if (user.approved === false && user.rejected !== true) {
@@ -59,19 +97,20 @@ function DashboardContent({ setActiveView }) {
           }
         });
 
-        setStats({
+        return {
           total: psCount + ctCount + mswdCount,
           partially_sighted: psCount,
           caretakers: ctCount,
           mswd: mswdCount,
           pending: pendingCaretakers
-        });
+        };
       } catch (error) {
         console.error("Error fetching demographics:", error);
+        return null;
       }
     };
 
-    // 3. Fetch AI Model & Vision Data
+    // 3. Fetch AI Model & Vision Data (Modified to RETURN data)
     const fetchVisionData = async () => {
       try {
         const [objSnap, faceSnap, scanSnap] = await Promise.all([
@@ -94,18 +133,19 @@ function DashboardContent({ setActiveView }) {
           Object.values(scanSnap.val()).forEach(userScans => scanCount += Object.keys(userScans).length);
         }
 
-        setVisionStats({
+        return {
           objects_detected: objCount,
           faces_registered: faceCount,
           scans_completed: scanCount,
           pending_training: objCount + faceCount 
-        });
+        };
       } catch (error) {
         console.error("Error fetching vision data:", error);
+        return null;
       }
     };
 
-    // 4. Fetch Recent Platform Activity
+    // 4. Fetch Recent Platform Activity (Modified to RETURN data)
     const fetchActivities = async () => {
       try {
         const activitiesQuery = query(ref(database, 'activity_logs'), limitToLast(4));
@@ -116,16 +156,31 @@ function DashboardContent({ setActiveView }) {
           snapshot.forEach((childSnapshot) => {
             acts.push({ id: childSnapshot.key, ...childSnapshot.val() });
           });
-          setRecentActivities(acts.reverse());
+          return acts.reverse();
         }
+        return [];
       } catch (error) {
         console.error("Error fetching activities:", error);
+        return [];
       }
     };
 
-    fetchDemographics();
-    fetchVisionData();
-    fetchActivities();
+    // 5. THE FIX: Load everything simultaneously, THEN update the UI all at once
+    const loadAllDashboardData = async () => {
+      const [demoData, visionData, activitiesData] = await Promise.all([
+        fetchDemographics(),
+        fetchVisionData(),
+        fetchActivities()
+      ]);
+
+      // React will batch these state updates together. 
+      // All components will receive their target numbers at the exact same millisecond.
+      if (demoData) setStats(demoData);
+      if (visionData) setVisionStats(visionData);
+      if (activitiesData) setRecentActivities(activitiesData);
+    };
+
+    loadAllDashboardData();
 
     return () => unsubscribe();
   }, []);
@@ -156,7 +211,7 @@ function DashboardContent({ setActiveView }) {
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
             Total Users
           </div>
-          <div className="stat-value">{stats.total}</div>
+          <div className="stat-value"><AnimatedNumber value={stats.total} /></div>
         </div>
 
         <div className="unified-card">
@@ -164,7 +219,7 @@ function DashboardContent({ setActiveView }) {
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
             Partially Sighted
           </div>
-          <div className="stat-value">{stats.partially_sighted}</div>
+          <div className="stat-value"><AnimatedNumber value={stats.partially_sighted} /></div>
         </div>
 
         <div className="unified-card">
@@ -172,7 +227,7 @@ function DashboardContent({ setActiveView }) {
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
             Caretakers
           </div>
-          <div className="stat-value">{stats.caretakers}</div>
+          <div className="stat-value"><AnimatedNumber value={stats.caretakers} /></div>
         </div>
 
         <div className="unified-card">
@@ -180,7 +235,7 @@ function DashboardContent({ setActiveView }) {
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
             MSWD / Admins
           </div>
-          <div className="stat-value">{stats.mswd}</div>
+          <div className="stat-value"><AnimatedNumber value={stats.mswd} /></div>
         </div>
       </div>
 
@@ -193,7 +248,7 @@ function DashboardContent({ setActiveView }) {
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
             Detected Objects
           </div>
-          <div className="stat-value">{visionStats.objects_detected}</div>
+          <div className="stat-value"><AnimatedNumber value={visionStats.objects_detected} /></div>
         </div>
 
         <div className="unified-card">
@@ -201,7 +256,7 @@ function DashboardContent({ setActiveView }) {
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 7V5a2 2 0 0 1 2-2h2"></path><path d="M17 3h2a2 2 0 0 1 2 2v2"></path><path d="M21 17v2a2 2 0 0 1-2 2h-2"></path><path d="M7 21H5a2 2 0 0 1-2-2v-2"></path><rect x="7" y="7" width="10" height="10" rx="2"></rect></svg>
             Faces Registered
           </div>
-          <div className="stat-value">{visionStats.faces_registered}</div>
+          <div className="stat-value"><AnimatedNumber value={visionStats.faces_registered} /></div>
         </div>
 
         <div className="unified-card">
@@ -209,7 +264,7 @@ function DashboardContent({ setActiveView }) {
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
             Texts Scanned
           </div>
-          <div className="stat-value">{visionStats.scans_completed}</div>
+          <div className="stat-value"><AnimatedNumber value={visionStats.scans_completed} /></div>
         </div>
       </div>
 
@@ -220,7 +275,7 @@ function DashboardContent({ setActiveView }) {
         {/* Left Column - Actions */}
         <div className="flex-column-gap">
           
-          {/* Caretaker Approvals (Clean, uncolored background) */}
+          {/* Caretaker Approvals */}
           <div className="unified-card align-top">
             <div className="action-req-header">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
@@ -239,7 +294,7 @@ function DashboardContent({ setActiveView }) {
             </div>
           </div>
 
-          {/* Model Training Queue (Clean, uncolored background) */}
+          {/* Model Training Queue */}
           <div className="unified-card align-top">
             <div className="action-req-header">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><circle cx="12" cy="12" r="4"></circle></svg>
@@ -262,28 +317,6 @@ function DashboardContent({ setActiveView }) {
         {/* Right Column - Status & Activity */}
         <div className="flex-column-gap">
           
-          {/* System Health */}
-          <div className="unified-card align-top">
-            <h3 className="section-title">System Health Status</h3>
-            <div className="health-list">
-              <div className="health-item">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
-                Authentication Engine 
-                <span className="status-badge">ONLINE</span>
-              </div>
-              <div className="health-item">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 2v6h-6"></path><path d="M3 12a9 9 0 0 1 15-6.7L21 8"></path><path d="M3 22v-6h6"></path><path d="M21 12a9 9 0 0 1-15 6.7L3 16"></path></svg>
-                Realtime Database
-                <span className="status-badge">ONLINE</span>
-              </div>
-              <div className="health-item">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle></svg>
-                TensorFlow Inference
-                <span className="status-badge">ONLINE</span>
-              </div>
-            </div>
-          </div>
-
           {/* Recent Activity */}
           <div className="unified-card align-top">
             <div className="activity-header">

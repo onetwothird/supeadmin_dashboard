@@ -6,6 +6,9 @@
 
 .sidebar { 
   width: 250px; 
+  flex-shrink: 0; 
+  height: 100vh; 
+  overflow-y: auto; 
   background: var(--sidebar-bg); 
   display: flex; 
   flex-direction: column; 
@@ -14,13 +17,12 @@
   transition: background-color 0.3s ease, border-color 0.3s ease;
   position: sticky;
   top: 0;
-  height: 100vh;
   box-sizing: border-box;
 }
 
 .logo-area { padding: 0 24px 24px 24px; margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border-color); }
 .logo-icon { width: 28px; height: 28px; background: var(--primary); border-radius: 6px; display: flex; align-items: center; justify-content: center; color: white; }
-.logo-text { font-weight: 700; font-size: 18px; color: var(--text-main); letter-spacing: -0.01em; }
+.logo-text { font-weight: 700; font-size: 18px; color: var(--text-main); letter-spacing: -0.01em;}
 
 .nav-menu { flex-grow: 1; display: flex; flex-direction: column; gap: 4px; padding: 0 16px; }
 .nav-item { padding: 10px 14px; border-radius: 8px; color: var(--text-muted); text-decoration: none; font-size: 14px; font-weight: 500; display: flex; align-items: center; gap: 12px; cursor: pointer; transition: all 0.2s ease; white-space: nowrap; }
@@ -32,8 +34,24 @@
 /* 💡 Slide-out Drawer Logic */
 @media (max-width: 992px) {
   .mobile-header {
-    display: flex; align-items: center; justify-content: space-between; padding: 16px 24px; background: var(--sidebar-bg); border-bottom: 1px solid var(--border-color); position: sticky; top: 0; z-index: 900;
+    display: flex; 
+    align-items: center; 
+    justify-content: space-between; 
+    padding: 16px 24px; 
+    background: var(--sidebar-bg); 
+    border-bottom: 1px solid var(--border-color); 
+    position: sticky; 
+    top: 0; 
+    z-index: 900;
+    width: 100%;
+    box-sizing: border-box;
   }
+  .mobile-header img {
+    border-radius: 8px !important;
+    object-fit: cover !important;
+    overflow: hidden !important;
+  }
+  
   .hamburger-btn { background: transparent; border: none; color: var(--text-main); cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 8px; border-radius: 6px; transition: background-color 0.2s ease; }
   .hamburger-btn:hover { background: var(--hover-bg); }
 
@@ -42,7 +60,7 @@
 
   .nav-menu { flex-direction: column; padding: 0 16px; }
   .sidebar-bottom { flex-direction: column; }
-  .logo-area { padding: 24px; margin-bottom: 24px; }
+  .logo-area { padding: 24px; margin-bottom: 24px;}
 
   .sidebar-overlay { display: block; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(2px); z-index: 950; opacity: 0; visibility: hidden; transition: all 0.3s ease; }
   .sidebar-overlay.active { opacity: 1; visibility: visible; }

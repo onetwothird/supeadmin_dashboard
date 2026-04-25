@@ -67,6 +67,8 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
+  box-shadow: var(--card-shadow); /* 👈 Add this line */
+  transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease; /* 👈 Optional: smooth transitions */
 }
 
 .unified-card.align-top {
@@ -179,3 +181,40 @@
 .activity-title { color: var(--text-main, #111827); font-size: 14px; font-weight: 600; text-transform: capitalize; }
 .activity-desc { color: var(--text-muted, #6b7280); font-size: 13px; margin-top: 4px; word-break: break-word; line-height: 1.4; }
 .activity-empty { color: var(--text-muted, #9ca3af); font-size: 13px; font-style: italic; padding: 10px 0; }
+
+/* =========================================
+   MOBILE RESPONSIVENESS FIXES
+   ========================================= */
+@media (max-width: 992px) {
+  /* 1. Stack the layout vertically so the header sits on top */
+  .dashboard-container {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  /* 2. Reduce the massive padding for smaller phone screens */
+  .main-content {
+    padding: 24px 16px 100px 16px; 
+    height: auto;
+    overflow-y: visible;
+  }
+
+  /* 3. Resize typography so it doesn't break lines awkwardly */
+  .page-title {
+    font-size: 24px;
+    margin-bottom: 16px;
+  }
+  
+  .page-subtitle {
+    font-size: 14px;
+    margin-bottom: 24px;
+  }
+
+  /* 4. Force all grids into a single column so they don't squish */
+  .stats-grid,
+  .vision-grid,
+  .content-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}

@@ -1,40 +1,62 @@
 /* C:\seelai-web-dashboard\src\styles\variables.css */
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap');
 
-/* LIGHT MODE (Default) */
+/* =========================================
+   LIGHT MODE (Clean & Airy)
+   ========================================= */
 :root {
-  --primary: #8B5CF6; 
+  --primary: #7C3AED; /* Slightly deeper violet for better contrast */
   --primary-bg: #F5F3FF; 
-  --bg-color: #F9FAFB;
-  --sidebar-bg: #FFFFFF;
-  --text-main: #111827;
-  --text-muted: #6B7280;
-  --border-color: #E5E7EB;
-  --card-bg: #FFFFFF;
-  --hover-bg: #F9FAFB;
+  --primary-light: #EDE9FE;
   
-  --tip-bg: #FFFBEB;
-  --tip-border: #FEF3C7;
+  /* Backgrounds & Surfaces */
+  --bg-color: #F8FAFC; /* Slate 50 - Very soft, cool gray */
+  --sidebar-bg: #FFFFFF;
+  --card-bg: #FFFFFF;
+  --hover-bg: #F1F5F9; /* Slate 100 */
+  
+  /* Typography & Borders */
+  --text-main: #0F172A; /* Slate 900 - Sharp, highly readable */
+  --text-muted: #64748B; /* Slate 500 */
+  --border-color: #E2E8F0; /* Slate 200 */
+  
+  /* Alerts / Tips */
+  --tip-bg: #FEF3C7;
+  --tip-border: #FDE68A;
   --tip-title: #D97706;
   --tip-text: #92400E;
+
+  /* Depth */
+  --card-shadow: 0px 4px 20px rgba(0, 0, 0, 0.03);
 }
 
-/* DARK MODE OVERRIDES */
-[data-theme="dark"] {
-  --primary: #8B5CF6; 
-  --primary-bg: #2E1065; 
-  --bg-color: #111827; 
-  --sidebar-bg: #1F2937;
-  --text-main: #F9FAFB;
-  --text-muted: #9CA3AF;
-  --border-color: #374151;
-  --card-bg: #1F2937;
-  --hover-bg: #374151;
+/* =========================================
+   DARK MODE (Sleek & Deep)
+   ========================================= */
+:root[data-theme="dark"] {
+  --primary: #8B5CF6; /* Brighter violet so it pops in dark mode */
+  --primary-bg: rgba(139, 92, 246, 0.15); 
+  --primary-light: rgba(139, 92, 246, 0.15);
+  
+  /* Backgrounds & Surfaces */
+  --bg-color: #0B0F19; /* Very dark, cool background */
+  --sidebar-bg: #111827; /* Elevated above the background */
+  --card-bg: #151E2E; /* Distinct from the background for clean separation */
+  --hover-bg: #1E293B;
+  
+  /* Typography & Borders */
+  --text-main: #F8FAFC; /* Slate 50 */
+  --text-muted: #94A3B8; /* Slate 400 */
+  --border-color: #1E293B; /* Subtle, barely-there borders */
 
+  /* Alerts / Tips */
   --tip-bg: #422006; 
   --tip-border: #78350F;
   --tip-title: #FBBF24;
   --tip-text: #FDE68A;
+
+  /* Depth */
+  --card-shadow: 0px 4px 20px rgba(0, 0, 0, 0.25);
 }
 
 body { 

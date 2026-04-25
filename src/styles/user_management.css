@@ -1,11 +1,15 @@
 /* C:\seelai-web-dashboard\src\styles\user_management.css */
 
-/* Tabs Navigation */
+/* ---------------------------------------------------
+   TABS & EMPTY STATE
+   --------------------------------------------------- */
 .um-tabs-container {
   display: flex;
   border-bottom: 1px solid var(--border-color);
   margin-bottom: 32px;
   gap: 16px;
+  overflow-x: auto; 
+  -webkit-overflow-scrolling: touch;
 }
 
 .um-tab {
@@ -19,6 +23,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
+  white-space: nowrap;
 }
 
 .um-tab:hover {
@@ -46,7 +51,6 @@
   color: #ffffff;
 }
 
-/* Empty State */
 .um-empty-state {
   padding: 64px 24px;
   text-align: center;
@@ -73,14 +77,15 @@
   max-width: 400px;
 }
 
-/* Pending Review Cards Grid */
+/* ---------------------------------------------------
+   PENDING REVIEW CARDS (RESPONSIVE GRID)
+   --------------------------------------------------- */
 .um-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 24px;
 }
 
-/* Hover animation removed as requested */
 .um-card {
   background: var(--card-bg);
   border: 1px solid var(--border-color);
@@ -97,6 +102,24 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
+  gap: 12px;
+}
+
+.um-header-content {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.um-profile-img {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+  background-color: var(--border-color);
+  border: 2px solid var(--bg-color);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  flex-shrink: 0;
 }
 
 .um-card-title {
@@ -104,11 +127,13 @@
   font-weight: 700;
   color: var(--text-main);
   margin: 0 0 4px 0;
+  word-break: break-word;
 }
 
 .um-card-subtitle {
   font-size: 13px;
   color: var(--text-muted);
+  word-break: break-word;
 }
 
 .um-status-badge {
@@ -135,10 +160,6 @@
   gap: 4px;
 }
 
-.um-detail-group.full-width {
-  grid-column: span 2;
-}
-
 .um-label {
   color: var(--text-muted);
   font-size: 12px;
@@ -163,17 +184,20 @@
   margin-top: auto;
 }
 
-.um-btn-approve {
+.um-btn-approve, .um-btn-reject {
   flex: 1;
   padding: 10px;
-  background: var(--primary);
-  color: #ffffff;
-  border: none;
   border-radius: 8px;
   font-weight: 600;
   font-size: 13px;
   cursor: pointer;
-  transition: opacity 0.2s;
+  transition: all 0.2s;
+}
+
+.um-btn-approve {
+  background: var(--primary);
+  color: #ffffff;
+  border: none;
 }
 
 .um-btn-approve:hover {
@@ -181,34 +205,31 @@
 }
 
 .um-btn-reject {
-  flex: 1;
-  padding: 10px;
   background: transparent;
   color: var(--text-main);
   border: 1px solid var(--border-color);
-  border-radius: 8px;
-  font-weight: 600;
-  font-size: 13px;
-  cursor: pointer;
-  transition: background-color 0.2s;
 }
 
 .um-btn-reject:hover {
   background: var(--hover-bg);
 }
 
-/* Active Users Table */
+/* ---------------------------------------------------
+   ACTIVE USERS TABLE
+   --------------------------------------------------- */
 .um-table-container {
   background: var(--card-bg);
   border: 1px solid var(--border-color);
   border-radius: 16px;
-  overflow-x: auto;
+  overflow-x: auto; 
+  -webkit-overflow-scrolling: touch; 
+  width: 100%;
 }
 
 .um-table {
   width: 100%;
+  min-width: 900px; 
   border-collapse: collapse;
-  text-align: left;
 }
 
 .um-th {
@@ -220,6 +241,18 @@
   letter-spacing: 0.05em;
   border-bottom: 1px solid var(--border-color);
   background: var(--bg-color);
+  white-space: nowrap; 
+}
+
+/* Strict Alignments */
+.um-th:nth-child(1), .um-td:nth-child(1) { width: 28%; text-align: left; }
+.um-th:nth-child(2), .um-td:nth-child(2) { width: 17%; text-align: left; }
+.um-th:nth-child(3), .um-td:nth-child(3) { width: 20%; text-align: center; }
+.um-th:nth-child(4), .um-td:nth-child(4) { width: 15%; text-align: center; }
+.um-th:nth-child(5), .um-td:nth-child(5) { width: 20%; text-align: center; }
+
+.um-td:nth-child(4) .um-info-row {
+  justify-content: center; 
 }
 
 .um-tr {
@@ -237,7 +270,23 @@
 
 .um-td {
   padding: 20px 24px;
-  vertical-align: top;
+  vertical-align: middle; 
+}
+
+.um-user-info-cell {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.um-profile-img-small {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  object-fit: cover;
+  background-color: var(--border-color);
+  border: 1px solid var(--border-color);
+  flex-shrink: 0;
 }
 
 .um-user-name {
@@ -250,7 +299,7 @@
 .um-user-email {
   font-size: 13px;
   color: var(--text-muted);
-  margin-bottom: 8px;
+  margin-bottom: 6px;
 }
 
 .um-demo-pill {
@@ -267,24 +316,18 @@
   font-size: 13px;
   color: var(--text-main);
   font-weight: 500;
-  margin-bottom: 4px;
-}
-
-.um-contact-sub {
-  font-size: 12px;
-  color: var(--text-muted);
-  max-width: 200px;
-  line-height: 1.4;
 }
 
 .um-patients-badge {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
   background: var(--bg-color);
   padding: 6px 12px;
   border-radius: 8px;
   border: 1px solid var(--border-color);
+  margin: 0 auto; 
 }
 
 .um-patients-text {
@@ -296,9 +339,8 @@
 .um-info-row {
   font-size: 12px;
   color: var(--text-main);
-  margin-bottom: 6px;
   display: flex;
-  gap: 8px;
+  gap: 6px;
 }
 
 .um-info-label {
@@ -307,26 +349,89 @@
 }
 
 .um-status-active {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 12px;
-  font-weight: 600;
-  padding: 6px 12px;
-  background: rgba(16, 185, 129, 0.1);
-  color: #10b981;
-  border-radius: 20px;
-  margin-bottom: 8px;
+  display: inline-block;
+  font-size: 13px;
+  font-weight: 700;
+  color: #15803d; 
+  margin-bottom: 4px;
 }
 
 .um-status-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: #10b981;
+  display: none; 
 }
 
 .um-date-text {
   font-size: 12px;
   color: var(--text-muted);
+}
+
+/* ---------------------------------------------------
+   MOBILE OPTIMIZATION (< 700px)
+   --------------------------------------------------- */
+@media (max-width: 700px) {
+  /* Tighten Tabs */
+  .um-tabs-container {
+    margin-bottom: 20px;
+    gap: 8px;
+  }
+  
+  .um-tab {
+    padding: 10px 16px;
+    font-size: 13px;
+  }
+
+  /* Compact Pending Cards */
+  .um-card-header { 
+    padding: 16px; 
+  }
+  
+  .um-card-body { 
+    padding: 16px; 
+    grid-template-columns: 1fr; /* Forces details to stack vertically */
+    gap: 14px;
+  }
+  
+  .um-card-actions { 
+    padding: 12px 16px; 
+  }
+
+  /* Compact Active Table Scroll Area */
+  .um-table {
+    min-width: 750px; /* Reduces scroll distance on small screens */
+  }
+  
+  .um-th {
+    padding: 12px 16px;
+    font-size: 11px;
+  }
+  
+  .um-td {
+    padding: 16px;
+  }
+
+  /* Resize Inner Table Elements */
+  .um-profile-img-small {
+    width: 36px;
+    height: 36px;
+  }
+  
+  .um-user-info-cell {
+    gap: 10px;
+  }
+  
+  .um-user-name {
+    font-size: 13px;
+  }
+  
+  .um-contact-main {
+    font-size: 12px;
+  }
+  
+  .um-patients-badge {
+    padding: 4px 10px;
+  }
+  
+  .um-patients-text {
+    font-size: 11px;
+  }
 }

@@ -22,6 +22,24 @@ function UserManagement({ logActivity }) {
     return value;
   };
 
+  // Helper to get profile image or fallback to initials
+  const getProfileImage = (url, name) => {
+    if (url && url.trim() !== '') return url;
+    const fallbackName = name ? encodeURIComponent(name) : 'User';
+    return `https://ui-avatars.com/api/?name=${fallbackName}&background=random`;
+  };
+
+  // Helper to dynamically format demographics based only on available data
+  const formatDemographics = (sex, age) => {
+    const parts = [];
+    const validSex = sex && sex.trim() !== '' && sex !== 'Not Specified';
+    
+    if (validSex) parts.push(sex);
+    if (age) parts.push(`${age} yrs`);
+    
+    return parts.length > 0 ? parts.join(' • ') : 'N/A';
+  };
+
   useEffect(() => {
     const caretakersRef = ref(database, 'user_info/caretaker');
     const unsubscribe = onValue(caretakersRef, (snapshot) => {
@@ -90,8 +108,8 @@ function UserManagement({ logActivity }) {
   };
 
   return (
-    <div style={{ height: '100%', overflowY: 'auto', width: '100%' }}>
-      <div className="main-content" style={{ paddingBottom: '100px' }}>
+    <div style={{ height: '100%', overflowY: 'auto', width: '100%', overflowX: 'hidden' }}>
+      <div className="main-content" style={{ paddingBottom: '100px', maxWidth: '100%' }}>
         
         <div className="header-badge">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><polyline points="16 11 18 13 22 9"/></svg>
@@ -132,18 +150,21 @@ function UserManagement({ logActivity }) {
                 {pendingCaretakers.map(user => (
                   <div key={user.id} className="um-card">
                     <div className="um-card-header">
-                      <div>
-                        <h3 className="um-card-title">{getDisplayValue(user.name, 'Unknown User')}</h3>
-                        <div className="um-card-subtitle">{getDisplayValue(user.email, 'No email')}</div>
+                      <div className="um-header-content">
+                        <img 
+                          src={getProfileImage(user.profileImageUrl, user.name)} 
+                          alt="Profile" 
+                          className="um-profile-img"
+                        />
+                        <div>
+                          <h3 className="um-card-title">{getDisplayValue(user.name, 'Unknown User')}</h3>
+                          <div className="um-card-subtitle">{getDisplayValue(user.email, 'No email')}</div>
+                        </div>
                       </div>
                       <span className="um-status-badge">Review Required</span>
                     </div>
                     
                     <div className="um-card-body">
-                      <div className="um-detail-group">
-                        <span className="um-label">ID Number</span>
-                        <span className="um-value">{getDisplayValue(user.idNumber)}</span>
-                      </div>
                       <div className="um-detail-group">
                         <span className="um-label">Contact</span>
                         <span className="um-value">{getDisplayValue(user.phone || user.contactNumber, 'No contact info')}</span>
@@ -152,15 +173,11 @@ function UserManagement({ logActivity }) {
                         <span className="um-label">Relationship</span>
                         <span className="um-value">{getDisplayValue(user.relationship)}</span>
                       </div>
-                      <div className="um-detail-group">
+                      <div className="um-detail-group" style={{ gridColumn: 'span 2' }}>
                         <span className="um-label">Demographics</span>
                         <span className="um-value">
-                          {getDisplayValue(user.sex, 'Not Specified')} • {user.age ? `${user.age} yrs` : 'N/A'}
+                          {formatDemographics(user.sex, user.age)}
                         </span>
-                      </div>
-                      <div className="um-detail-group full-width">
-                        <span className="um-label">Address</span>
-                        <span className="um-value">{getDisplayValue(user.address, 'No address provided')}</span>
                       </div>
                     </div>
 
@@ -186,9 +203,9 @@ function UserManagement({ logActivity }) {
               <thead>
                 <tr>
                   <th className="um-th">Profile</th>
-                  <th className="um-th">Contact & Location</th>
+                  <th className="um-th">Contact</th>
                   <th className="um-th">Platform Activity</th>
-                  <th className="um-th">Verification Details</th>
+                  <th className="um-th">Details</th>
                   <th className="um-th">Account Status</th>
                 </tr>
               </thead>
@@ -196,16 +213,24 @@ function UserManagement({ logActivity }) {
                 {activeCaretakers.map((user) => (
                   <tr key={user.id} className="um-tr">
                     <td className="um-td">
-                      <div className="um-user-name">{getDisplayValue(user.name, 'Unknown User')}</div>
-                      <div className="um-user-email">{getDisplayValue(user.email, 'No email')}</div>
-                      <span className="um-demo-pill">
-                        {getDisplayValue(user.sex, 'Not Specified')} • {user.age ? `${user.age} yrs` : 'N/A'}
-                      </span>
+                      <div className="um-user-info-cell">
+                        <img 
+                          src={getProfileImage(user.profileImageUrl, user.name)} 
+                          alt="Profile" 
+                          className="um-profile-img-small"
+                        />
+                        <div>
+                          <div className="um-user-name">{getDisplayValue(user.name, 'Unknown User')}</div>
+                          <div className="um-user-email">{getDisplayValue(user.email, 'No email')}</div>
+                          <span className="um-demo-pill">
+                            {formatDemographics(user.sex, user.age)}
+                          </span>
+                        </div>
+                      </div>
                     </td>
                     
                     <td className="um-td">
                       <div className="um-contact-main">{getDisplayValue(user.phone || user.contactNumber, 'No contact info')}</div>
-                      <div className="um-contact-sub">{getDisplayValue(user.address, 'No address provided')}</div>
                     </td>
                     
                     <td className="um-td">
@@ -219,12 +244,8 @@ function UserManagement({ logActivity }) {
                     
                     <td className="um-td">
                       <div className="um-info-row">
-                        <span className="um-info-label">REL:</span>
-                        <strong>{getDisplayValue(user.relationship)}</strong>
-                      </div>
-                      <div className="um-info-row">
-                        <span className="um-info-label">ID:</span>
-                        <strong>{getDisplayValue(user.idNumber)}</strong>
+                        <span className="um-info-label">(REL:</span>
+                        <strong>{getDisplayValue(user.relationship)})</strong>
                       </div>
                     </td>
                     
