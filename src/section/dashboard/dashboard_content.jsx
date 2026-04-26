@@ -316,7 +316,6 @@ function DashboardContent({ setActiveView }) {
 
         {/* Right Column - Status & Activity */}
         <div className="flex-column-gap">
-          
           {/* Recent Activity */}
           <div className="unified-card align-top">
             <div className="activity-header">
