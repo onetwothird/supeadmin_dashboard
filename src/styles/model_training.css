@@ -1,49 +1,124 @@
 /* C:\seelai-web-dashboard\src\styles\model_training.css */
 
-.step-section-title {
-  font-size: 16px;
-  font-weight: 800;
-  color: var(--text-main);
-  margin-top: 32px;
-  margin-bottom: 16px;
-}
-
-/* 2-Column Grid for Step 1 & 2 */
-.cards-grid-2 { 
-  display: grid; 
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); 
-  gap: 24px; 
-}
-
-/* Full Width Grid for Step 3 */
-.cards-grid-1 {
-  display: grid; 
-  grid-template-columns: 1fr; 
-  gap: 24px;
-}
-
-/* Main Card Styling */
-.action-card {
-  background: var(--card-bg);
-  border: 2px solid var(--border-color);
-  border-radius: 16px;
-  padding: 32px; 
-  cursor: pointer;
-  transition: all 0.2s ease;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+/* --- Wizard Centering Wrapper --- */
+.wizard-page-wrapper {
+  width: 100%;
+  max-width: 720px; 
+  margin: 0 auto; 
   display: flex;
   flex-direction: column;
 }
 
-.action-card:hover { 
-  border-color: var(--primary); 
+.wizard-page-wrapper .header-badge {
+  margin: 0 0 16px 0; 
+  align-self: flex-start;
 }
 
-/* Active State: Uses var(--card-bg) so it's pure white in Light Mode, but respects Dark Mode */
-.action-card.active {
+.wizard-page-wrapper .page-title {
+  text-align: left;
+  margin: 0 0 12px 0;
+}
+
+.wizard-page-wrapper .page-subtitle {
+  text-align: left;
+  margin: 0 0 40px 0;
+}
+
+/* --- Wizard Stepper UI --- */
+.wizard-stepper {
+  display: flex;
+  align-items: center;
+  margin-bottom: 40px;
+  width: 100%;
+}
+
+.step-indicator {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--text-muted);
+  font-weight: 600;
+  font-size: 14px;
+  transition: color 0.3s ease;
+}
+
+.step-indicator.active {
+  color: var(--primary);
+}
+
+.step-indicator.completed {
+  color: var(--text-main);
+}
+
+.step-circle {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--card-bg);
+  border: 2px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  transition: all 0.3s ease;
+}
+
+.step-indicator.active .step-circle {
   border-color: var(--primary);
+  background: var(--primary);
+  color: #ffffff;
+}
+
+.step-indicator.completed .step-circle {
+  border-color: var(--primary);
+  background: var(--primary-bg);
+  color: var(--primary);
+}
+
+.step-line {
+  flex: 1;
+  height: 2px;
+  background: var(--border-color);
+  margin: 0 16px;
+  transition: background 0.3s ease;
+}
+
+.step-line.active {
+  background: var(--primary);
+}
+
+/* --- Smooth Transition Animations --- */
+.step-content-container {
+  animation: slideUpFade 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  width: 100%;
+}
+
+@keyframes slideUpFade {
+  from { 
+    opacity: 0; 
+    transform: translateY(20px); 
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0); 
+  }
+}
+
+/* --- Main Card Styling (CLEANED UP) --- */
+.action-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color); /* Thinned to 1px for a sleeker look */
+  border-radius: 16px;
+  padding: 32px; 
+  display: flex;
+  flex-direction: column;
+}
+
+/* Replaced heavy purple borders with a soft, elegant neutral shadow */
+.action-card.active {
+  border-color: var(--border-color); 
   background-color: var(--card-bg); 
-  box-shadow: 0 8px 24px var(--primary-bg); /* Soft glow using variables */
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.06); /* Soft lift off the page */
 }
 
 .card-header { 
@@ -71,28 +146,10 @@
   color: var(--text-muted); 
   line-height: 1.6; 
   margin-bottom: 24px;
-  max-width: 800px;
+  max-width: 100%; 
 }
 
-/* Checkmark Circle */
-.check-circle { 
-  width: 26px; 
-  height: 26px; 
-  border-radius: 50%; 
-  border: 2px solid var(--border-color); 
-  display: flex; 
-  align-items: center; 
-  justify-content: center; 
-  transition: all 0.2s ease; 
-  background: var(--card-bg);
-}
-
-.action-card.active .check-circle { 
-  background: var(--primary); 
-  border-color: var(--primary); 
-}
-
-/* Buttons inside Cards */
+/* --- Buttons inside Cards --- */
 .robo-btn-group { 
   display: flex; 
   gap: 16px; 
@@ -120,13 +177,31 @@
 .robo-btn:hover { 
   border-color: var(--primary);
   color: var(--primary);
-  background-color: var(--primary-bg); /* Enforced Dark Mode Background */
+  background-color: var(--primary-bg);
 }
 
-/* File Upload Dropzone */
+/* --- Google Colab Code Block --- */
+.colab-code-block {
+  background: #1e1e1e;
+  color: #d4d4d4;
+  padding: 20px;
+  border-radius: 8px;
+  font-family: monospace;
+  font-size: 13px;
+  overflow-x: auto;
+  margin: 24px 0;
+  line-height: 1.6;
+  border: 1px solid #333;
+}
+
+.code-comment { color: #6a9955; }
+.code-keyword { color: #569cd6; }
+.code-string { color: #ce9178; }
+
+/* --- File Upload Dropzone (CLEANED UP) --- */
 .custom-upload-zone {
   margin-top: auto;
-  border: 2px dashed var(--border-color);
+  border: 2px dashed var(--border-color); /* Default to subtle gray */
   border-radius: 12px;
   padding: 40px 20px;
   text-align: center;
@@ -136,15 +211,13 @@
   flex-direction: column;
   align-items: center;
   gap: 16px;
+  cursor: pointer;
 }
 
-.action-card.active .custom-upload-zone {
-  border-color: var(--primary);
-}
-
+/* Removed the forced purple line, it now only highlights on hover */
 .custom-upload-zone:hover {
   border-color: var(--primary);
-  background: var(--primary-bg); /* Enforced Dark Mode Background */
+  background: var(--primary-bg);
 }
 
 .upload-btn {
@@ -171,7 +244,7 @@
   color: var(--text-muted);
 }
 
-/* Pro Tip Banner */
+/* --- Pro Tip Banner --- */
 .tip-card {
   background-color: transparent;
   border: 1px solid var(--border-color);
@@ -206,4 +279,45 @@
   color: var(--text-muted);
   font-size: 14px;
   line-height: 1.6;
+}
+
+/* --- Wizard Navigation Buttons --- */
+.wizard-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border-color);
+}
+
+.btn-back {
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  background: transparent;
+  color: var(--text-main);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-back:hover {
+  background: var(--hover-bg);
+}
+
+.btn-next {
+  padding: 10px 24px;
+  border-radius: 8px;
+  border: none;
+  background: var(--primary);
+  color: #ffffff;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 4px 12px var(--primary-bg);
+}
+
+.btn-next:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
 }
