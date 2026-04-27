@@ -1,4 +1,5 @@
 import React, { useState, useRef } from 'react';
+import { useGoogleLogin } from '@react-oauth/google';
 import '../../styles/model_training.css'; 
 
 function ModelTraining({ activeStep, setActiveStep, logActivity }) {
@@ -6,19 +7,94 @@ function ModelTraining({ activeStep, setActiveStep, logActivity }) {
   const roboflowFaceLink = "https://app.roboflow.com/seelai/seelai-face/annotate";
   const colabLink = "https://colab.research.google.com/";
 
-  const [selectedFileName, setSelectedFileName] = useState(null);
+  // STATE UPDATES: Handle multiple files
+  const [selectedFiles, setSelectedFiles] = useState([]); 
+  const [uploadStatus, setUploadStatus] = useState('');
+  const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef(null);
 
   const handleFileChange = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      setSelectedFileName(file.name);
-      if (logActivity) logActivity(`Selected model file: ${file.name}`);
+    // Convert the FileList object to a standard array
+    const files = Array.from(event.target.files);
+    if (files.length > 0) {
+      setSelectedFiles(files);
+      setUploadStatus(''); // Reset status when new files are selected
+      if (logActivity) logActivity(`Selected ${files.length} file(s) for deployment`);
     }
   };
 
   const nextStep = () => setActiveStep((prev) => Math.min(prev + 1, 3));
   const prevStep = () => setActiveStep((prev) => Math.max(prev - 1, 1));
+
+  // --- GOOGLE DRIVE UPLOAD LOGIC ---
+  const loginAndUpload = useGoogleLogin({
+    scope: 'https://www.googleapis.com/auth/drive.file',
+    onSuccess: async (tokenResponse) => {
+      setIsUploading(true);
+      let successCount = 0;
+
+      // Loop through all selected files and upload them one by one
+      for (let i = 0; i < selectedFiles.length; i++) {
+        const file = selectedFiles[i];
+        setUploadStatus(`Uploading ${file.name} (${i + 1} of ${selectedFiles.length})...`);
+        
+        const success = await uploadSingleFile(tokenResponse.access_token, file);
+        if (success) successCount++;
+      }
+
+      setIsUploading(false);
+      
+      // Final Status Check
+      if (successCount === selectedFiles.length) {
+        setUploadStatus('Deployment Successful!');
+      } else {
+        setUploadStatus(`Finished with errors. ${successCount}/${selectedFiles.length} uploaded.`);
+      }
+    },
+    onError: () => {
+      setUploadStatus('Authentication Failed. Please try again.');
+      setIsUploading(false);
+    },
+  });
+
+  const uploadSingleFile = async (accessToken, fileToUpload) => {
+    // NEW FOLDER ID PASTED HERE!
+    const FOLDER_ID = "1PhAuBbUcgLcMEoUnQoU0vHTBMv4KoQMl"; 
+
+    try {
+      // 1. Upload raw file
+      const uploadRes = await fetch(
+        'https://www.googleapis.com/upload/drive/v3/files?uploadType=media',
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            'Content-Type': 'application/octet-stream', 
+          },
+          body: fileToUpload,
+        }
+      );
+      
+      const fileData = await uploadRes.json();
+
+      // 2. Rename and move the file
+      await fetch(`https://www.googleapis.com/drive/v3/files/${fileData.id}?addParents=${FOLDER_ID}&removeParents=root`, {
+        method: 'PATCH',
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ name: fileToUpload.name }),
+      });
+
+      if(logActivity) logActivity(`Deployed ${fileToUpload.name} to designated Drive folder`);
+      return true; // Success
+      
+    } catch (error) {
+      console.error(`Failed to upload ${fileToUpload.name}:`, error);
+      return false; // Failed
+    }
+  };
 
   return (
     <div style={{ height: '100%', overflowY: 'auto', width: '100%' }}>
@@ -141,16 +217,18 @@ function ModelTraining({ activeStep, setActiveStep, logActivity }) {
                 </div>
               </div>
               <div className="card-desc">
-                After downloading the exported <strong>.tflite</strong> file from Colab, upload it here to push it to Firebase/Google Drive. The application will fetch these updated weights on the next launch.
+                Select your exported <strong>.tflite</strong> model and <strong>labels.txt</strong> file, then click deploy to push them to Google Drive.
               </div>
               
               <div 
                 className="custom-upload-zone"
-                onClick={() => fileInputRef.current.click()}
+                onClick={() => !isUploading && fileInputRef.current.click()}
+                style={{ opacity: isUploading ? 0.6 : 1, cursor: isUploading ? 'not-allowed' : 'pointer' }}
               >
                 <input 
                   type="file" 
-                  accept=".tflite" 
+                  multiple 
+                  accept=".tflite,.txt" 
                   ref={fileInputRef}
                   onChange={handleFileChange}
                   style={{ display: 'none' }}
@@ -161,16 +239,28 @@ function ModelTraining({ activeStep, setActiveStep, logActivity }) {
                   Browse Files
                 </div>
                 
-                <span className="upload-text">
-                  {selectedFileName ? (
-                    <span style={{ color: 'var(--text-main)', fontWeight: '600' }}>{selectedFileName}</span>
+                <div className="upload-text">
+                  {selectedFiles.length > 0 ? (
+                    <div style={{ color: 'var(--text-main)', fontWeight: '600' }}>
+                      {selectedFiles.length} file(s) selected:
+                      <ul style={{ margin: '8px 0 0 0', paddingLeft: '20px', textAlign: 'left', fontWeight: 'normal' }}>
+                        {selectedFiles.map((f, index) => <li key={index}>{f.name}</li>)}
+                      </ul>
+                    </div>
                   ) : (
-                    "or drag and drop .tflite file here"
+                    "or drag and drop files here"
                   )}
-                </span>
+                </div>
               </div>
 
-              {/* Pro Tip Banner specifically for Step 3 */}
+              {/* Show the upload status below the dropzone */}
+              {uploadStatus && (
+                <div style={{ marginTop: '16px', textAlign: 'center', fontWeight: 'bold', color: uploadStatus.includes('Error') || uploadStatus.includes('Failed') ? 'red' : 'var(--primary)' }}>
+                  {uploadStatus}
+                </div>
+              )}
+
+              {/* Pro Tip Banner */}
               <div className="tip-card" style={{ marginTop: '24px' }}>
                 <div className="tip-icon">
                   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
@@ -178,7 +268,7 @@ function ModelTraining({ activeStep, setActiveStep, logActivity }) {
                 <div className="tip-content">
                   <div className="tip-title">Pro tip</div>
                   <div className="tip-desc">
-                    Ensure the labels mapping file (<code>labels.txt</code>) is also updated if you added new classes during the annotation phase.
+                    Hold down <strong>Ctrl</strong> (Windows) or <strong>Cmd</strong> (Mac) when selecting files to upload both the model and labels mapping file at the same time.
                   </div>
                 </div>
               </div>
@@ -191,7 +281,7 @@ function ModelTraining({ activeStep, setActiveStep, logActivity }) {
             <button 
               className="btn-back" 
               onClick={prevStep}
-              style={{ visibility: activeStep === 1 ? 'hidden' : 'visible' }}
+              style={{ visibility: activeStep === 1 || isUploading ? 'hidden' : 'visible' }}
             >
               Back
             </button>
@@ -200,12 +290,25 @@ function ModelTraining({ activeStep, setActiveStep, logActivity }) {
               <button className="btn-next" onClick={nextStep}>
                 Next Step
               </button>
+            ) : uploadStatus === 'Deployment Successful!' ? (
+              <button 
+                className="btn-next" 
+                onClick={() => {
+                  setSelectedFiles([]);
+                  setUploadStatus('');
+                  alert("Deployment Complete! The models are ready.");
+                }}
+              >
+                Deploy Again!
+              </button>
             ) : (
-              <button className="btn-next" onClick={() => {
-                if(logActivity && selectedFileName) logActivity("Deployed new model to storage");
-                alert("Model deployment initiated!");
-              }}>
-                Complete Deployment
+              <button 
+                className="btn-next" 
+                disabled={selectedFiles.length === 0 || isUploading}
+                style={{ opacity: (selectedFiles.length === 0 || isUploading) ? 0.5 : 1 }}
+                onClick={() => loginAndUpload()}
+              >
+                {isUploading ? 'Deploying...' : 'Deploy to Drive'}
               </button>
             )}
           </div>
