@@ -3,11 +3,12 @@ import { createRoot } from 'react-dom/client'
 import App from './App.jsx'
 import { GoogleOAuthProvider } from '@react-oauth/google';
 
-// IMPORTANT: Put your Client ID here or in your .env file
-const GOOGLE_CLIENT_ID = "985531066364-5hck5sakhct0j2keqkcdb2hca28mt260.apps.googleusercontent.com"; 
+// 1. Use Vite's syntax (import.meta.env) and the VITE_ prefix
+const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
 createRoot(document.getElementById('root')).render(
-  <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
+  // 2. Pass the exact variable name 'clientId' that you defined above
+  <GoogleOAuthProvider clientId={clientId}>
     <StrictMode>
       <App />
     </StrictMode>
