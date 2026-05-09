@@ -1,9 +1,11 @@
+// C:\seelai-web-dashboard\src\auth\login.jsx
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { auth, database } from '../firebase';
 import { signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, signOut } from 'firebase/auth';
-import { ref, get, set, serverTimestamp } from 'firebase/database';
-import '../styles/auth.css'; // <-- Imported CSS
+import { ref, get } from 'firebase/database';
+import '../styles/auth.css';
 
 function Login() {
   const navigate = useNavigate();
@@ -37,6 +39,7 @@ function Login() {
   };
 
   const handleRoleRouting = async (user) => {
+    // Check Superadmin
     const superadminRef = ref(database, `user_info/superadmin/${user.uid}`);
     const superadminSnap = await get(superadminRef);
 
@@ -44,11 +47,13 @@ function Login() {
       return { route: '/admin', name: superadminSnap.val().name || user.displayName || 'Admin' };
     }
 
+    // Check MSWD
     const mswdRef = ref(database, `user_info/mswd/${user.uid}`);
     const mswdSnap = await get(mswdRef);
 
     if (mswdSnap.exists() && mswdSnap.val().role === 'admin') {
-      return { route: '/mswd', name: mswdSnap.val().name || user.displayName || 'MSWD Admin' };
+      // Changed from '/mswd' to '/admin' to match App.jsx routing
+      return { route: '/admin', name: mswdSnap.val().name || user.displayName || 'MSWD Admin' };
     }
 
     return null;
@@ -65,7 +70,7 @@ function Login() {
       const authData = await handleRoleRouting(userCredential.user);
 
       if (!authData) {
-        await signOut(auth);
+        await signOut(auth); // Sign them out immediately
         throw new Error("Access denied. Authorized admin account required.");
       }
 
@@ -89,24 +94,14 @@ function Login() {
       const authData = await handleRoleRouting(user);
 
       if (!authData) {
-        const newAdminRef = ref(database, `user_info/superadmin/${user.uid}`);
-        const newName = user.displayName || "Google Admin";
-        await set(newAdminRef, {
-          name: newName,
-          email: user.email,
-          role: "superadmin",
-          department: "IT Control",
-          isActive: true,
-          createdAt: serverTimestamp(),
-          updatedAt: serverTimestamp(),
-        });
-
-        setToast({ message: `Welcome, ${newName}!`, type: 'success' });
-        setTimeout(() => navigate('/admin'), 1500);
-      } else {
-        setToast({ message: `Welcome back, ${authData.name}!`, type: 'success' });
-        setTimeout(() => navigate(authData.route), 1500);
-      }
+        // STRICT VALIDATION: Do NOT create an account. Kick them out.
+        await signOut(auth);
+        throw new Error("Access denied. Your Google account is not mapped to an Admin or MSWD role.");
+      } 
+      
+      setToast({ message: `Welcome back, ${authData.name}!`, type: 'success' });
+      setTimeout(() => navigate(authData.route), 1500);
+      
     } catch (err) {
       setFirebaseError(err.message.replace('Firebase: ', ''));
       setIsLoading(false);
