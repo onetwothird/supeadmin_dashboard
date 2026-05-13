@@ -47,12 +47,11 @@ function Login() {
       return { route: '/admin', name: superadminSnap.val().name || user.displayName || 'Admin' };
     }
 
-    // Check MSWD
+    // Check MSWD fallback
     const mswdRef = ref(database, `user_info/mswd/${user.uid}`);
     const mswdSnap = await get(mswdRef);
 
     if (mswdSnap.exists() && mswdSnap.val().role === 'admin') {
-      // Changed from '/mswd' to '/admin' to match App.jsx routing
       return { route: '/admin', name: mswdSnap.val().name || user.displayName || 'MSWD Admin' };
     }
 
