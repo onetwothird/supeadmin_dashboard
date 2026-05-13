@@ -3,7 +3,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { auth, database } from '../firebase';
-// Added signOut to the import list
 import { createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, signOut } from 'firebase/auth';
 import { ref, set, serverTimestamp } from 'firebase/database';
 import '../styles/auth.css';
@@ -19,7 +18,7 @@ function Register() {
   const [errors, setErrors] = useState({});
   const [firebaseError, setFirebaseError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [toast, setToast] = useState(null); // Added toast state
+  const [toast, setToast] = useState(null); 
 
   const validateForm = () => {
     const newErrors = {};
@@ -53,27 +52,27 @@ function Register() {
 
     setIsLoading(true);
     try {
-      // 1. Create the user in Firebase Auth (this auto-logs them in)
+      // 1. Create the user in Firebase Auth
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
 
-      // 2. Save their specific data to the Realtime Database
-      const newUserRef = ref(database, `user_info/mswd/${user.uid}`);
+      // 2. Save their specific data to the Realtime Database under superadmin
+      const newUserRef = ref(database, `user_info/superadmin/${user.uid}`);
       await set(newUserRef, {
         name: name,
         email: email,
-        role: "admin",
-        department: "MSWD",
+        role: "superadmin",
+        department: "Superadmin",
         isActive: true,
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp(),
       });
 
-      // 3. THE FIX: Immediately sign them out so they are forced to log in manually
+      // 3. Immediately sign them out so they are forced to log in manually
       await signOut(auth);
 
       // 4. Show success validation and redirect to login
-      setToast({ message: `Account created for ${name}! Please log in.`, type: 'success' });
+      setToast({ message: `Superadmin account created for ${name}! Please log in.`, type: 'success' });
       setTimeout(() => navigate('/login'), 2000);
 
     } catch (err) {
@@ -87,19 +86,18 @@ function Register() {
     setIsLoading(true);
     try {
       const provider = new GoogleAuthProvider();
-      // Google Auth also auto-logs the user in
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
 
       const newName = user.displayName || "Google User";
 
-      // Save to database
-      const newAdminRef = ref(database, `user_info/mswd/${user.uid}`);
+      // Save to database under superadmin
+      const newAdminRef = ref(database, `user_info/superadmin/${user.uid}`);
       await set(newAdminRef, {
         name: newName,
         email: user.email,
-        role: "admin",
-        department: "MSWD",
+        role: "superadmin",
+        department: "Superadmin",
         isActive: true,
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp(),
@@ -120,7 +118,6 @@ function Register() {
 
   return (
     <>
-      {/* Toast Notification UI */}
       {toast && (
         <div className="custom-toast">
           {toast.type === 'success' ? (
