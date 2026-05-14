@@ -1,34 +1,45 @@
 /* C:\seelai-web-dashboard\src\styles\model_training.css */
 
+/* --- Glassmorphism UI Variables --- */
+:root {
+  --glass-bg: rgba(255, 255, 255, 0.4);
+  --glass-border: rgba(139, 92, 246, 0.2);
+}
+
+:root[data-theme="dark"] {
+  --glass-bg: rgba(30, 41, 59, 0.5); 
+  --glass-border: rgba(139, 92, 246, 0.2);
+}
+
 /* --- Wizard Centering Wrapper --- */
 .wizard-page-wrapper {
   width: 100%;
-  max-width: 720px; 
-  margin: 0 auto; 
+  max-width: 100%; 
+  margin: 0; 
   display: flex;
   flex-direction: column;
 }
 
 .wizard-page-wrapper .header-badge {
-  margin: 0 0 16px 0; 
+  margin: 0 0 12px 0; 
   align-self: flex-start;
 }
 
 .wizard-page-wrapper .page-title {
   text-align: left;
-  margin: 0 0 12px 0;
+  margin: 0 0 8px 0;
 }
 
 .wizard-page-wrapper .page-subtitle {
   text-align: left;
-  margin: 0 0 40px 0;
+  margin: 0 0 16px 0;
 }
 
 /* --- Wizard Stepper UI --- */
 .wizard-stepper {
   display: flex;
   align-items: center;
-  margin-bottom: 40px;
+  margin-bottom: 20px;
   width: 100%;
 }
 
@@ -94,38 +105,31 @@
 }
 
 @keyframes slideUpFade {
-  from { 
-    opacity: 0; 
-    transform: translateY(20px); 
-  }
-  to { 
-    opacity: 1; 
-    transform: translateY(0); 
-  }
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-/* --- Main Card Styling (CLEANED UP) --- */
+/* --- Glassmorphic Card Styling --- */
 .action-card {
-  background: var(--card-bg);
-  border: 1px solid var(--border-color); /* Thinned to 1px for a sleeker look */
   border-radius: 16px;
-  padding: 32px; 
+  padding: 24px; 
   display: flex;
   flex-direction: column;
 }
 
-/* Replaced heavy purple borders with a soft, elegant neutral shadow */
-.action-card.active {
-  border-color: var(--border-color); 
-  background-color: var(--card-bg); 
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.06); /* Soft lift off the page */
+.glassy-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 10px 40px rgba(139, 92, 246, 0.08);
 }
 
 .card-header { 
   display: flex; 
   justify-content: space-between; 
   align-items: flex-start; 
-  margin-bottom: 16px; 
+  margin-bottom: 12px; 
 }
 
 .card-title { 
@@ -137,32 +141,270 @@
   gap: 10px; 
 }
 
-.card-title svg { 
-  color: var(--text-main); 
-}
+.card-title svg { color: var(--text-main); }
 
 .card-desc { 
-  font-size: 14px; 
+  font-size: 13px; 
   color: var(--text-muted); 
   line-height: 1.6; 
   margin-bottom: 24px;
   max-width: 100%; 
 }
 
-/* --- Buttons inside Cards --- */
-.robo-btn-group { 
-  display: flex; 
-  gap: 16px; 
-  margin-top: auto; 
+/* ------------------------------------------- */
+/* --- UNIVERSAL Split Layout (Left/Right) --- */
+/* ------------------------------------------- */
+.split-content-layout {
+  display: flex;
+  flex-direction: row;
+  gap: 32px;
+  align-items: stretch;
 }
 
-.robo-btn {
+.split-info-col {
+  flex: 1; /* Changed from 0.8 to force equal width */
+  min-width: 0; /* CRITICAL: Prevents long code lines from breaking the 50/50 split */
+  display: flex;
+  flex-direction: column;
+}
+
+/* --- Tutorial Carousel UI (Right Side) --- */
+.tutorial-container {
+  flex: 1; /* Changed from 1.2 to force equal width */
+  min-width: 0; /* CRITICAL */
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 12px;
+  margin: 0; 
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.dataset-btn-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px; 
+  width: 100%;
   flex: 1; 
+  margin-top: 12px;
+}
+
+.dataset-card-btn {
+  width: 100%;
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 24px 20px;
+  border-radius: 16px;
+  border: 1px solid var(--border-color);
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  color: var(--text-main);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
+}
+
+.dataset-card-btn:hover {
+  border-color: #8B5CF6; 
+  background: rgba(139, 92, 246, 0.05); 
+  transform: translateY(-4px);
+  box-shadow: 0 8px 25px rgba(139, 92, 246, 0.15);
+}
+
+.dataset-card-btn .icon-wrapper {
+  background: rgba(139, 92, 246, 0.1);
+  color: #8B5CF6;
+  padding: 12px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dataset-card-btn .text-wrapper {
+  display: flex;
+  flex-direction: column;
+  flex: 1; 
+}
+
+.btn-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.dataset-card-btn .btn-title {
+  font-weight: 700;
+  font-size: 16px;
+  color: var(--text-main);
+}
+
+.dataset-card-btn .btn-badge {
+  font-size: 11px;
+  font-weight: 600;
+  color: #8B5CF6;
+  background: rgba(139, 92, 246, 0.1);
+  padding: 4px 10px;
+  border-radius: 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.dataset-card-btn .btn-explanation {
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.6;
+  margin: 0;
+  font-weight: 400;
+}
+
+
+.tutorial-image-wrapper {
+  position: relative;
+  width: 100%;
+  flex: 1; /* Replaces aspect-ratio to dynamically fill vertical space */
+  min-height: 250px; /* Prevents the box from shrinking too much on shorter steps */
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.tutorial-image {
+  width: 100%;
+  height: 100%; 
+  display: block;
+  object-fit: contain; 
+  object-position: center; /* Changed from 'top' to perfectly center the image */
+  border-radius: 8px;
+}
+
+.tutorial-overlay {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+}
+
+.tutorial-badge {
+  background: rgba(0, 0, 0, 0.6);
+  color: #fff;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  backdrop-filter: blur(4px);
+}
+
+.tutorial-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.icon-btn {
+  background: var(--primary-bg);
+  color: var(--primary);
+  border: none;
+  width: 32px; 
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.2s;
+}
+
+.icon-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.icon-btn:not(:disabled):hover {
+  background: var(--primary);
+  color: #fff;
+}
+
+.tutorial-text {
+  flex: 1;
+  text-align: center;
+  min-height: 60px; 
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.tutorial-text h4 {
+  margin: 0 0 4px 0;
+  color: var(--text-main);
+  font-size: 14px;
+}
+
+.tutorial-text p {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.carousel-dots {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.carousel-dots .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--border-color);
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.carousel-dots .dot.active {
+  background: var(--primary);
+  width: 16px;
+  border-radius: 4px;
+}
+
+.colab-code-block {
+  padding: 16px;
+  border-radius: 8px;
+  font-family: monospace;
+  font-size: 13px;
+  overflow-x: auto;
+  overflow-y: auto;          
+  max-height: 400px;        
+  margin: 16px 0;
+  line-height: 1.6;
+  white-space: pre-wrap;     
+}
+
+.solid-code {
+  background: #1e1e1e;       
+  color: #d4d4d4;            
+  border: 1px solid #333;    
+}
+
+.code-comment { color: #6a9955; }
+.code-keyword { color: #569cd6; }
+.code-string { color: #ce9178; }
+
+/* --- Buttons inside Cards (Other Steps) --- */
+.robo-btn {
   padding: 12px; 
   border-radius: 8px;
-  border: 1px solid var(--border-color);
-  background-color: var(--card-bg);
-  color: var(--text-main);
   cursor: pointer; 
   font-weight: 600; 
   font-size: 14px;
@@ -174,38 +416,27 @@
   gap: 8px;
 }
 
-.robo-btn:hover { 
-  border-color: var(--primary);
+.primary-glass-btn {
+  background: var(--primary-bg);
   color: var(--primary);
-  background-color: var(--primary-bg);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(4px);
 }
 
-/* --- Google Colab Code Block --- */
-.colab-code-block {
-  background: #1e1e1e;
-  color: #d4d4d4;
-  padding: 20px;
-  border-radius: 8px;
-  font-family: monospace;
-  font-size: 13px;
-  overflow-x: auto;
-  margin: 24px 0;
-  line-height: 1.6;
-  border: 1px solid #333;
+.primary-glass-btn:hover {
+  background: var(--primary);
+  color: #fff;
+  border-color: var(--primary);
+  box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
 }
 
-.code-comment { color: #6a9955; }
-.code-keyword { color: #569cd6; }
-.code-string { color: #ce9178; }
-
-/* --- File Upload Dropzone (CLEANED UP) --- */
+/* --- File Upload Dropzone --- */
 .custom-upload-zone {
   margin-top: auto;
-  border: 2px dashed var(--border-color); /* Default to subtle gray */
+  border: 2px dashed var(--border-color);
   border-radius: 12px;
-  padding: 40px 20px;
+  padding: 32px 20px;
   text-align: center;
-  background: var(--card-bg);
   transition: all 0.2s ease;
   display: flex;
   flex-direction: column;
@@ -214,16 +445,31 @@
   cursor: pointer;
 }
 
-/* Removed the forced purple line, it now only highlights on hover */
-.custom-upload-zone:hover {
+.glassy-upload {
+  background: var(--glass-bg);
+  backdrop-filter: blur(8px);
+  border-color: var(--glass-border);
+}
+
+.glassy-upload:hover {
   border-color: var(--primary);
   background: var(--primary-bg);
 }
 
-.upload-btn {
+.primary-solid-btn {
   background: var(--primary);
   color: #ffffff;
-  padding: 12px 32px;
+  border: none;
+  box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+}
+
+.primary-solid-btn:hover {
+  opacity: 0.9;
+  transform: translateY(-2px);
+}
+
+.upload-btn {
+  padding: 10px 24px;
   border-radius: 8px;
   font-weight: 600;
   font-size: 14px;
@@ -231,12 +477,7 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  border: none;
   transition: opacity 0.2s;
-}
-
-.upload-btn:hover {
-  opacity: 0.9;
 }
 
 .upload-text {
@@ -246,14 +487,18 @@
 
 /* --- Pro Tip Banner --- */
 .tip-card {
-  background-color: transparent;
-  border: 1px solid var(--border-color);
   border-radius: 12px;
-  padding: 24px;
+  padding: 16px;
   display: flex;
   align-items: flex-start;
   gap: 16px;
-  margin-top: 40px;
+  margin-top: 24px;
+}
+
+.glassy-tip {
+  background: var(--primary-bg);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(4px);
 }
 
 .tip-icon {
@@ -277,16 +522,16 @@
 
 .tip-desc {
   color: var(--text-muted);
-  font-size: 14px;
-  line-height: 1.6;
+  font-size: 13px;
+  line-height: 1.5;
 }
 
 /* --- Wizard Navigation Buttons --- */
 .wizard-actions {
   display: flex;
   justify-content: space-between;
-  margin-top: 32px;
-  padding-top: 24px;
+  margin-top: 24px;
+  padding-top: 20px;
   border-top: 1px solid var(--border-color);
 }
 
@@ -308,16 +553,146 @@
 .btn-next {
   padding: 10px 24px;
   border-radius: 8px;
-  border: none;
-  background: var(--primary);
-  color: #ffffff;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
-  box-shadow: 0 4px 12px var(--primary-bg);
 }
 
-.btn-next:hover {
-  opacity: 0.9;
-  transform: translateY(-1px);
+/* --- Dataset Explanation Block --- */
+.dataset-explanation {
+  margin-top: auto; 
+  padding: 16px;
+  background: var(--hover-bg);
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.dataset-explanation-title {
+  margin: 0;
+  font-size: 13px;
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.dataset-explanation p {
+  margin: 0;
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+.dataset-explanation strong {
+  color: var(--text-main);
+  font-weight: 600;
+}
+
+/* --- macOS Window Wrapper --- */
+.mac-window {
+  margin: 16px 0;
+  border-radius: 8px;
+  background: #1e1e1e; 
+  border: 1px solid #333;
+  overflow: hidden; 
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  flex: 1; 
+  min-height: 0; 
+  min-width: 0; /* Prevents window from breaking out of 50/50 split */
+}
+
+.mac-header {
+  display: flex;
+  align-items: center;
+  background: #2d2d2d;
+  padding: 10px 16px;
+  border-bottom: 1px solid #111;
+}
+
+.mac-buttons {
+  display: flex;
+  gap: 8px;
+  margin-right: 16px;
+}
+
+.mac-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+
+.mac-dot.close { background: #ff5f56; }
+.mac-dot.minimize { background: #ffbd2e; }
+.mac-dot.maximize { background: #27c93f; }
+
+.mac-title {
+  color: #888;
+  font-size: 12px;
+  font-family: monospace;
+  margin: 0 auto; 
+  padding-right: 56px; 
+}
+
+/* --- Code Block & Line Numbers --- */
+.colab-code-block {
+  margin: 0; 
+  padding: 16px 0; 
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 13px;
+  flex: 1; /* Replaced max-height: 400px so it fills the empty vertical space dynamically */
+  overflow-y: auto;
+  overflow-x: auto;
+  display: block; /* Changed from table to properly respect the parent width */
+  width: 100%;
+}
+
+.solid-code {
+  background: #1e1e1e;
+  color: #d4d4d4;
+}
+
+.code-line {
+  display: flex; /* Changed from table-row */
+  min-width: max-content; /* Ensures background hover spans the whole scrolled width */
+}
+
+.code-line:hover {
+  background: rgba(255, 255, 255, 0.05); 
+}
+
+.line-number {
+  flex-shrink: 0; /* Prevents line numbers from squishing */
+  width: 40px; 
+  text-align: right;
+  padding: 0 16px;
+  color: #666;
+  user-select: none; 
+  border-right: 1px solid #333;
+}
+
+.line-content {
+  padding-left: 16px;
+  white-space: pre; 
+}
+
+/* --- Secondary Button Style --- */
+.secondary-glass-btn {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-main);
+  border: 1px solid var(--border-color);
+  backdrop-filter: blur(4px);
+}
+
+.secondary-glass-btn:hover {
+  background: var(--hover-bg);
+  color: var(--primary);
+  border-color: var(--primary);
 }
