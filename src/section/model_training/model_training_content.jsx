@@ -11,29 +11,79 @@ function ModelTraining({ activeStep, setActiveStep, logActivity }) {
   const roboflowFaceLink = "https://app.roboflow.com/seelais-workspace/seelai-face-eordb/";
   const kaggleLink = "https://www.kaggle.com/";
 
-  // The summarized Kaggle notebook script for UI display
-  const notebookCode = `# SEELAI: YOLOv8 Training Pipeline (Overview)
-# Note: Download the full notebook below for complete execution.
+ const notebookCode = `# SEELAI: YOLOv8 Object Detection Training Pipeline
 
-# 1. Setup Environment & Dependencies
-!pip install --upgrade ultralytics roboflow
+# Check GPU
+!nvidia-smi
 
-# 2. Authenticate & Download Custom Dataset
+# Setup Environment
+import os
+HOME = os.getcwd()
+
+!pip install --upgrade ultralytics
+!pip install roboflow
+
+import ultralytics
+ultralytics.checks()
+
+# Download Dataset
 from roboflow import Roboflow
+
 rf = Roboflow(api_key="${roboflowApiKey}")
+project = rf.workspace("seelais-workspace").project("seelai-objects-s7rir")
+version = project.version(4)
+
 dataset = version.download("yolov8")
 
-# 3. Train YOLOv8 Nano Model
-!yolo task=detect mode=train model=yolov8n.pt epochs=120 imgsz=640
+# Train YOLOv8 Nano Model
+%cd {HOME}
 
-# 4. Evaluate Model Metrics
-# (Generates Confusion Matrix, mAP Graphs, Precision/Recall)
+!yolo task=detect \\
+mode=train \\
+model=yolov8n.pt \\
+data=/kaggle/working/Seelai-Objects-4/data.yaml \\
+epochs=120 \\
+imgsz=320 \\
+plots=True \\
+batch=32 \\
+patience=25 \\
+name=seelai_object_detection
 
-# 5. Export to TFLite (INT8 Quantized for Mobile App)
-!yolo export format=tflite optimize=True int8=True
+# Display Results
+from IPython.display import Image, display
 
-# 6. Download Mobile Model
-# (Exports best_int8.tflite for deployment)`;
+display(Image(
+    filename=f'{HOME}/runs/detect/seelai_object_detection/confusion_matrix.png',
+    width=800
+))
+
+display(Image(
+    filename=f'{HOME}/runs/detect/seelai_object_detection/results.png',
+    width=800
+))
+
+# Evaluate Metrics
+from ultralytics import YOLO
+
+model = YOLO(
+    f"{HOME}/runs/detect/seelai_object_detection/weights/best.pt"
+)
+
+metrics = model.val(
+    data=f"{dataset.location}/data.yaml"
+)
+
+print(f"Precision: {metrics.box.mp * 100:.2f}%")
+print(f"Recall: {metrics.box.mr * 100:.2f}%")
+print(f"mAP@50: {metrics.box.map50 * 100:.2f}%")
+print(f"mAP@50-95: {metrics.box.map * 100:.2f}%")
+
+# Export to TensorFlow Lite
+!yolo export \\
+model={HOME}/runs/detect/seelai_object_detection/weights/best.pt \\
+format=tflite \\
+half=True \\
+imgsz=320`; 
 
   const [selectedFiles, setSelectedFiles] = useState([]); 
   const [uploadStatus, setUploadStatus] = useState('');
