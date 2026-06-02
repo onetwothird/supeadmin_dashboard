@@ -158,7 +158,7 @@ function AdminDashboard() {
         className={`sidebar-overlay ${isMobileMenuOpen ? 'active' : ''}`} 
         onClick={() => setIsMobileMenuOpen(false)}
       ></div>
-
+      
       <Sidebar 
         handleLogout={handleLogout} 
         isDarkMode={isDarkMode} 
