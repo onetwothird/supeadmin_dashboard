@@ -162,16 +162,16 @@
 }
 
 .split-info-col {
-  flex: 1; /* Changed from 0.8 to force equal width */
-  min-width: 0; /* CRITICAL: Prevents long code lines from breaking the 50/50 split */
+  flex: 0.8; /* Changed from 1 to 0.8 to shrink the left side */
+  min-width: 0; 
   display: flex;
   flex-direction: column;
 }
 
 /* --- Tutorial Carousel UI (Right Side) --- */
 .tutorial-container {
-  flex: 1; /* Changed from 1.2 to force equal width */
-  min-width: 0; /* CRITICAL */
+  flex: 1.2; /* Changed from 1 to 1.2 to expand the right side */
+  min-width: 0; 
   background: var(--card-bg);
   border: 1px solid var(--border-color);
   border-radius: 12px;
@@ -179,7 +179,7 @@
   margin: 0; 
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 12
 }
 
 .dataset-btn-container {
@@ -378,18 +378,7 @@
   border-radius: 4px;
 }
 
-.colab-code-block {
-  padding: 16px;
-  border-radius: 8px;
-  font-family: monospace;
-  font-size: 13px;
-  overflow-x: auto;
-  overflow-y: auto;          
-  max-height: 400px;        
-  margin: 16px 0;
-  line-height: 1.6;
-  white-space: pre-wrap;     
-}
+
 
 .solid-code {
   background: #1e1e1e;       
@@ -641,8 +630,17 @@
   padding-right: 56px; 
 }
 
-/* --- Code Block & Line Numbers --- */
 .colab-code-block {
+  padding: 16px;
+  border-radius: 8px;
+  font-family: monospace;
+  font-size: 13px;
+  overflow-x: auto;
+  overflow-y: auto;          
+  max-height: 400px;        
+  margin: 16px 0;
+  line-height: 1.6;
+  white-space: pre-wrap;     
   margin: 0; 
   padding: 16px 0; 
   font-family: 'Courier New', Courier, monospace;
