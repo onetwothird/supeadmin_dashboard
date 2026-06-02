@@ -169,8 +169,9 @@ function UserManagement({ logActivity }) {
                         <span className="um-label">Contact</span>
                         <span className="um-value">{getDisplayValue(user.phone || user.contactNumber, 'No contact info')}</span>
                       </div>
+                      {/* Fixed: Label changed to Registered Role to avoid confusion */}
                       <div className="um-detail-group">
-                        <span className="um-label">Relationship</span>
+                        <span className="um-label">Registered Role</span>
                         <span className="um-value">{getDisplayValue(user.relationship)}</span>
                       </div>
                       <div className="um-detail-group" style={{ gridColumn: 'span 2' }}>
@@ -205,7 +206,8 @@ function UserManagement({ logActivity }) {
                   <th className="um-th">Profile</th>
                   <th className="um-th">Contact</th>
                   <th className="um-th">Platform Activity</th>
-                  <th className="um-th">Details</th>
+                  {/* Fixed: Header changed from Details to Role */}
+                  <th className="um-th">Role</th>
                   <th className="um-th">Account Status</th>
                 </tr>
               </thead>
@@ -242,10 +244,15 @@ function UserManagement({ logActivity }) {
                       </div>
                     </td>
                     
+                    {/* Fixed: Completely redesigned how the role is displayed */}
                     <td className="um-td">
-                      <div className="um-info-row">
-                        <span className="um-info-label">(REL:</span>
-                        <strong>{getDisplayValue(user.relationship)})</strong>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                        <span className="um-label" style={{ fontSize: '11px', textTransform: 'uppercase' }}>
+                          Registered Role
+                        </span>
+                        <span className="um-value" style={{ fontSize: '13px', fontWeight: '600' }}>
+                          {getDisplayValue(user.relationship)}
+                        </span>
                       </div>
                     </td>
                     
