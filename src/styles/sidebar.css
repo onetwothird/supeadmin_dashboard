@@ -14,7 +14,7 @@
   flex-direction: column; 
   padding: 24px 0 24px 0; 
   border-right: 1px solid var(--border-color); 
-  transition: background-color 0.3s ease, border-color 0.3s ease;
+  /* Removed: transition: background-color 0.3s ease... */
   position: sticky;
   top: 0;
   box-sizing: border-box;
@@ -64,4 +64,37 @@
 
   .sidebar-overlay { display: block; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(2px); z-index: 950; opacity: 0; visibility: hidden; transition: all 0.3s ease; }
   .sidebar-overlay.active { opacity: 1; visibility: visible; }
+}
+
+/* --- Premium Theme Toggle Animation --- */
+.theme-icon-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+}
+
+/* Replicates the 800ms animation from Dart:
+  - Scale down to 0.7 then bounce to 1 (elastic out)
+  - Rotate 360 degrees
+  - Add a primary color glow midway
+*/
+.animating-theme-icon svg {
+  animation: premiumToggleAnim 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+@keyframes premiumToggleAnim {
+  0% {
+    transform: scale(1) rotate(0deg);
+    filter: drop-shadow(0 0 0px transparent);
+  }
+  30% {
+    transform: scale(0.7) rotate(90deg);
+    filter: drop-shadow(0 0 12px var(--primary)); 
+  }
+  100% {
+    transform: scale(1) rotate(360deg);
+    filter: drop-shadow(0 0 0px transparent);
+  }
 }
