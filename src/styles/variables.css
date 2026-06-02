@@ -64,5 +64,20 @@ body {
   background-color: var(--bg-color); 
   font-family: 'Poppins', -apple-system, sans-serif; 
   color: var(--text-main);
-  transition: background-color 0.3s ease, color 0.3s ease;
+  /* REMOVE the CSS transition here so the View Transition API can handle the animation */
+}
+
+/* --- View Transition API Circular Wave Effect --- */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+/* Ensure the old view stays beneath the expanding new view */
+::view-transition-old(root) {
+  z-index: 1;
+}
+::view-transition-new(root) {
+  z-index: 2;
 }
