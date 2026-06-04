@@ -243,8 +243,7 @@ function UserManagement({ logActivity }) {
                         </span>
                       </div>
                     </td>
-                    
-                    
+                              
                     {/* Fixed: Completely redesigned how the role is displayed */}
                     <td className="um-td">
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
