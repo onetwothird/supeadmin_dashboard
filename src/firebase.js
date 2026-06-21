@@ -1,7 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getDatabase } from "firebase/database";
 import { getAuth } from "firebase/auth";
-import { getAnalytics } from "firebase/analytics";
 
 // Your real web app's Firebase configuration
 const firebaseConfig = {
@@ -19,6 +18,5 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 
 // Export the services so our React components can use them
-export const analytics = getAnalytics(app);
 export const database = getDatabase(app);
 export const auth = getAuth(app);
